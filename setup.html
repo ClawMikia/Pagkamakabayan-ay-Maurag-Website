@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup Console | Pagkamakabayan ay Maurag</title>
+  <meta name="description" content="Pre-battle setup page for a dark-mode Game of the Generals website.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body data-page="setup">
+  <div class="site-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <p class="eyebrow">Pre-Battle Briefing</p>
+        <h1>Setup Console</h1>
+        <p class="brand-copy">Choose battlefield personality, select CPU temper, and stage a dramatic board presence before the first concealed move.</p>
+      </div>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
+
+      <nav id="site-nav" class="site-nav">
+        <a href="./index.html" data-nav-link>Command Deck</a>
+        <a href="./setup.html" data-nav-link>Setup Page</a>
+        <a href="./battle.html" data-nav-link>Battle UI</a>
+        <a href="./rules-lore.html" data-nav-link>Rules & Lore</a>
+      </nav>
+
+      <section class="sidebar-panel">
+        <p class="panel-label">Operational Advice</p>
+        <p class="muted">Beginners thrive on pattern recognition. Veterans thrive on misdirection. This page frames both in a comic dossier style.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Match Configuration</p>
+          <h2>Build your field order.</h2>
+          <p class="lead">This UI is intentionally atmospheric rather than purely utilitarian. It turns setup into an opening chapter.</p>
+        </div>
+
+        <div class="setup-grid">
+          <article class="panel setup-summary">
+            <div class="section-heading">
+              <p class="eyebrow">Briefing Extract</p>
+              <h3>Live difficulty framing</h3>
+            </div>
+            <div class="difficulty-focus" data-difficulty-focus></div>
+            <div class="summary-card" data-setup-summary>
+              <p>Select loadout options to render a mission summary.</p>
+            </div>
+          </article>
+
+          <form class="panel panel--inset setup-form" data-setup-form>
+            <label>
+              <span>Commander Faction</span>
+              <select name="faction">
+                <option value="archival">Archival Guard</option>
+                <option value="katipunan">Katipunan Echo</option>
+                <option value="aurora">Aurora Watch</option>
+              </select>
+            </label>
+
+            <label>
+              <span>CPU Difficulty</span>
+              <select name="difficulty" data-difficulty-select>
+                <option value="Anak">Anak</option>
+                <option value="Mabalos / Salamat">Mabalos / Salamat</option>
+                <option value="Maurag po Ako">Maurag po Ako</option>
+                <option value="Mahal ko ang Bayan">Mahal ko ang Bayan</option>
+              </select>
+            </label>
+
+            <div class="setup-option">
+              <div class="setup-option__header">
+                <span>Country Flag</span>
+              </div>
+              <input type="hidden" name="flag" data-option-input="flag">
+              <div data-option-carousel="flag"></div>
+            </div>
+
+            <div class="setup-option">
+              <div class="setup-option__header">
+                <span>Rank Character Pack</span>
+                <small>Preview real art before selection</small>
+              </div>
+              <input type="hidden" name="rankCharacters" data-option-input="rankCharacters">
+              <div data-option-carousel="rankCharacters"></div>
+            </div>
+
+            <div class="setup-option">
+              <div class="setup-option__header">
+                <span>Piece Design</span>
+                <small>Flip through frame and badge styles</small>
+              </div>
+              <input type="hidden" name="pieceDesign" data-option-input="pieceDesign">
+              <div data-option-carousel="pieceDesign"></div>
+            </div>
+
+            <div class="setup-option">
+              <div class="setup-option__header">
+                <span>Piece Color Skin</span>
+                <small>Dynamic tint pack from your folder</small>
+              </div>
+              <input type="hidden" name="pieceColor" data-option-input="pieceColor">
+              <div data-option-carousel="pieceColor"></div>
+            </div>
+
+            <div class="setup-option">
+              <div class="setup-option__header">
+                <span>Board Skin</span>
+                <small>Centered coverflow-style skin preview</small>
+              </div>
+              <input type="hidden" name="board" data-option-input="board">
+              <div data-option-carousel="board"></div>
+            </div>
+
+            <div class="setup-option">
+              <div class="setup-option__header">
+                <span>Commander Portrait Pack</span>
+                <small>Use your own art folder and refresh the manifest</small>
+              </div>
+              <input type="hidden" name="portrait" data-option-input="portrait">
+              <div data-option-carousel="portrait"></div>
+            </div>
+
+            <fieldset class="toggle-fieldset">
+              <legend>Mission Modifiers</legend>
+              <label><input type="checkbox" name="fog" checked> Full fog-of-war mode</label>
+              <label><input type="checkbox" name="initiative" checked> Initiative captions enabled</label>
+              <label><input type="checkbox" name="history"> Lore annotations between turns</label>
+            </fieldset>
+
+            <button class="button button--primary" type="button" data-generate-briefing>Generate briefing</button>
+          </form>
+
+        </div>
+      </section>
+
+      <section class="dual-panel">
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Country Flags</p>
+            <h3>Choose the nation banner shown on your piece badges</h3>
+          </div>
+          <div class="asset-showcase" data-flag-showcase></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Rank Characters</p>
+            <h3>Reference sheets or character packs for every rank</h3>
+          </div>
+          <div class="asset-showcase" data-rank-showcase></div>
+        </article>
+      </section>
+
+      <section class="dual-panel">
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Piece Design</p>
+            <h3>Piece silhouettes and color overlays loaded from folders</h3>
+          </div>
+          <div class="asset-showcase" data-piece-showcase></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Board Skins</p>
+            <h3>Manifest-loaded visual themes</h3>
+          </div>
+          <div class="asset-showcase" data-board-showcase></div>
+        </article>
+      </section>
+
+      <section class="dual-panel">
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Portrait Packs</p>
+            <h3>Character art swaps for headers and tactical callouts</h3>
+          </div>
+          <div class="asset-showcase" data-portrait-showcase></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Static Asset Note</p>
+            <h3>Add files to folders, then refresh the manifest</h3>
+            <p class="lead">Every setup selector reads from your folders after running `refresh-assets.ps1`, so replacing or adding images changes the UI without editing HTML.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/data/assets-manifest.js"></script>
+  <script src="./assets/js/asset-loader.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>

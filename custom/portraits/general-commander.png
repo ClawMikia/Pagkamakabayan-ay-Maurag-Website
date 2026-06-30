@@ -1,0 +1,12 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="640" rx="48" fill="#0B0F18"/>
+  <rect x="22" y="22" width="596" height="596" rx="36" stroke="#DFB263" stroke-opacity="0.45" stroke-width="4"/>
+  <circle cx="320" cy="214" r="104" fill="#15233A"/>
+  <path d="M214 510C226 417.149 264.334 371 320 371C375.666 371 414 417.149 426 510" fill="#243B61"/>
+  <path d="M265 229C278 193.667 299.667 176 330 176C360.333 176 382 193.667 395 229" stroke="#DFB263" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="284" cy="216" r="12" fill="#DFB263"/>
+  <circle cx="355" cy="216" r="12" fill="#DFB263"/>
+  <path d="M285 276C309 293.333 331 293.333 355 276" stroke="#E7DFCC" stroke-width="12" stroke-linecap="round"/>
+  <path d="M222 131L320 82L418 131" stroke="#D55656" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="320" y="572" fill="#E7DFCC" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">GENERAL COMMANDER</text>
+</svg>

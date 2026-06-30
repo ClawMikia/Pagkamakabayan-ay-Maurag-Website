@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Piece design sample">
+  <rect width="240" height="240" rx="32" fill="#101521"/>
+  <path d="M120 26l72 24v56c0 48-26 84-72 108-46-24-72-60-72-108V50z" fill="#8e6747" stroke="#e7dfcc" stroke-opacity=".35" stroke-width="4"/>
+  <path d="M120 58l44 14v34c0 30-14 54-44 74-30-20-44-44-44-74V72z" fill="#0d4f5d"/>
+  <path d="M120 82l12 24 27 4-20 18 5 27-24-13-24 13 5-27-20-18 27-4z" fill="#274130"/>
+</svg>

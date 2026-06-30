@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle UI | Pagkamakabayan ay Maurag</title>
+  <meta name="description" content="Battle interface mockup for a dark-mode Game of the Generals site.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body data-page="battle">
+  <div class="site-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <p class="eyebrow">Engagement Simulator</p>
+        <h1>Battle UI</h1>
+        <p class="brand-copy">A static but richly themed combat screen showing how Game of the Generals can feel like a comic-book campaign panel.</p>
+      </div>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
+
+      <nav id="site-nav" class="site-nav">
+        <a href="./index.html" data-nav-link>Command Deck</a>
+        <a href="./setup.html" data-nav-link>Setup Page</a>
+        <a href="./battle.html" data-nav-link>Battle UI</a>
+        <a href="./rules-lore.html" data-nav-link>Rules & Lore</a>
+      </nav>
+
+      <section class="sidebar-panel">
+        <p class="panel-label">Battle Feed Legend</p>
+        <p class="muted">Red blocks are pressure zones, amber labels are hidden-rank warnings, and blue captions reinforce controlled reconnaissance.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="battle-header">
+          <div>
+            <p class="eyebrow">Turn 09 · Midfield Tension</p>
+            <h2>Board state: initiative tilts toward the daring scout line.</h2>
+          </div>
+          <div class="battle-toolbar">
+            <label>
+              <span>CPU Temper</span>
+              <select data-battle-difficulty>
+                <option value="Anak">Anak</option>
+                <option value="Mabalos / Salamat">Mabalos / Salamat</option>
+                <option value="Maurag po Ako" selected>Maurag po Ako</option>
+                <option value="Mahal ko ang Bayan">Mahal ko ang Bayan</option>
+              </select>
+            </label>
+            <div class="stopwatch-panel" data-stopwatch>
+              <span class="stopwatch-panel__label">Battle Stopwatch</span>
+              <strong class="stopwatch-panel__time" data-stopwatch-display>00:00</strong>
+              <div class="stopwatch-panel__actions">
+                <button class="button button--ghost" type="button" data-stopwatch-start>Start</button>
+                <button class="button button--ghost" type="button" data-stopwatch-pause>Pause</button>
+                <button class="button button--ghost" type="button" data-stopwatch-reset>Reset</button>
+              </div>
+            </div>
+            <button class="button button--ghost" type="button" data-randomize-feed>Refresh feed</button>
+          </div>
+        </div>
+
+        <div class="battle-layout">
+          <article class="panel panel--inset battle-sidebar-card">
+            <div class="section-heading">
+              <p class="eyebrow">Commander Notes</p>
+              <h3>Difficulty traits</h3>
+            </div>
+            <div class="difficulty-focus" data-battle-difficulty-focus></div>
+
+            <div class="status-stack">
+              <div class="status-pill">Flag secure</div>
+              <div class="status-pill">Spy uncertain</div>
+              <div class="status-pill">Aerial lane contested</div>
+            </div>
+          </article>
+
+          <article class="battle-board panel panel--inset">
+            <div class="battle-board__skin" data-board-skin-swatch></div>
+            <div class="battle-grid" data-battle-grid></div>
+          </article>
+
+          <article class="panel panel--inset battle-sidebar-card">
+            <div class="section-heading">
+              <p class="eyebrow">Field Broadcast</p>
+              <h3>Comic-style encounter log</h3>
+            </div>
+            <div class="feed-list" data-feed-list></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="dual-panel">
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Unit Cards</p>
+            <h3>Representative ranks and battlefield roles</h3>
+          </div>
+          <div class="unit-grid">
+            <article class="unit-card">
+              <span class="unit-rank">Flag</span>
+              <p>Victory condition embodied. Protect at all cost, but disguise its lane through deliberate posture.</p>
+            </article>
+            <article class="unit-card">
+              <span class="unit-rank">Spy</span>
+              <p>Fragile, surgical, and terrifying when concealed long enough to threaten the strongest officer.</p>
+            </article>
+            <article class="unit-card">
+              <span class="unit-rank">General</span>
+              <p>Command weight on the board. Strong presence, but also a magnet for traps and forced reveals.</p>
+            </article>
+            <article class="unit-card">
+              <span class="unit-rank">Private</span>
+              <p>Humility with consequences: the only rank that can topple the spy and defend the unexpected lane.</p>
+            </article>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Loaded Cosmetics</p>
+            <h3>Saved setup assets applied to the pieces and board</h3>
+          </div>
+          <div class="asset-showcase" data-battlefx-showcase></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/data/assets-manifest.js"></script>
+  <script src="./assets/js/asset-loader.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>

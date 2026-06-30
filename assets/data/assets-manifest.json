@@ -1,0 +1,161 @@
+{
+    "generatedAt":  "2026-06-30T19:41:28.7606466Z",
+    "root":  "./custom",
+    "counts":  {
+                   "country-flags":  11,
+                   "rank-characters":  1,
+                   "piece-designs":  1,
+                   "piece-colors":  1,
+                   "board-skins":  2,
+                   "portraits":  2,
+                   "banners":  1,
+                   "ui-icons":  1,
+                   "battlefx":  1
+               },
+    "assets":  {
+                   "country-flags":  [
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Brazil.png",
+                                             "label":  "Brazil",
+                                             "url":  "./custom/country-flags/Brazil.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "China.png",
+                                             "label":  "China",
+                                             "url":  "./custom/country-flags/China.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "France.png",
+                                             "label":  "France",
+                                             "url":  "./custom/country-flags/France.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Germany.png",
+                                             "label":  "Germany",
+                                             "url":  "./custom/country-flags/Germany.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "India.png",
+                                             "label":  "India",
+                                             "url":  "./custom/country-flags/India.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Japan.png",
+                                             "label":  "Japan",
+                                             "url":  "./custom/country-flags/Japan.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Korea.png",
+                                             "label":  "Korea",
+                                             "url":  "./custom/country-flags/Korea.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Philippines.png",
+                                             "label":  "Philippines",
+                                             "url":  "./custom/country-flags/Philippines.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Russia.png",
+                                             "label":  "Russia",
+                                             "url":  "./custom/country-flags/Russia.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "United Kingdom.png",
+                                             "label":  "United Kingdom",
+                                             "url":  "./custom/country-flags/United Kingdom.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "United States.png",
+                                             "label":  "United States",
+                                             "url":  "./custom/country-flags/United States.png"
+                                         }
+                                     ],
+                   "rank-characters":  [
+                                           {
+                                               "category":  "rank-characters",
+                                               "fileName":  "rank-commanders.png",
+                                               "label":  "Rank Commanders",
+                                               "url":  "./custom/rank-characters/rank-commanders.png"
+                                           }
+                                       ],
+                   "piece-designs":  [
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "brass-shield.png",
+                                             "label":  "Brass Shield",
+                                             "url":  "./custom/piece-designs/brass-shield.png"
+                                         }
+                                     ],
+                   "piece-colors":  [
+                                        {
+                                            "category":  "piece-colors",
+                                            "fileName":  "verdigris-tint.png",
+                                            "label":  "Verdigris Tint",
+                                            "url":  "./custom/piece-colors/verdigris-tint.png"
+                                        }
+                                    ],
+                   "board-skins":  [
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "aurora-grid.png",
+                                           "label":  "Aurora Grid",
+                                           "url":  "./custom/board-skins/aurora-grid.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "fortress-sepia.png",
+                                           "label":  "Fortress Sepia",
+                                           "url":  "./custom/board-skins/fortress-sepia.png"
+                                       }
+                                   ],
+                   "portraits":  [
+                                     {
+                                         "category":  "portraits",
+                                         "fileName":  "general-commander.png",
+                                         "label":  "General Commander",
+                                         "url":  "./custom/portraits/general-commander.png"
+                                     },
+                                     {
+                                         "category":  "portraits",
+                                         "fileName":  "shadow-scout.png",
+                                         "label":  "Shadow Scout",
+                                         "url":  "./custom/portraits/shadow-scout.png"
+                                     }
+                                 ],
+                   "banners":  [
+                                   {
+                                       "category":  "banners",
+                                       "fileName":  "bayanihan-banner.png",
+                                       "label":  "Bayanihan Banner",
+                                       "url":  "./custom/banners/bayanihan-banner.png"
+                                   }
+                               ],
+                   "ui-icons":  [
+                                    {
+                                        "category":  "ui-icons",
+                                        "fileName":  "sun-star.png",
+                                        "label":  "Sun Star",
+                                        "url":  "./custom/ui-icons/sun-star.png"
+                                    }
+                                ],
+                   "battlefx":  [
+                                    {
+                                        "category":  "battlefx",
+                                        "fileName":  "fog-sweep.png",
+                                        "label":  "Fog Sweep",
+                                        "url":  "./custom/battlefx/fog-sweep.png"
+                                    }
+                                ]
+               }
+}

@@ -1,0 +1,11 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="640" rx="48" fill="#090B11"/>
+  <rect x="26" y="26" width="588" height="588" rx="34" stroke="#66A3FF" stroke-opacity="0.35" stroke-width="4"/>
+  <path d="M189 531C224.349 428.028 267.264 376.542 319.5 376.542C371.736 376.542 414.651 428.028 450 531" fill="#1A2743"/>
+  <circle cx="320" cy="233" r="110" fill="#101828"/>
+  <path d="M240 244C277.333 195.333 336.667 195.333 398 244" stroke="#66A3FF" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="286" cy="242" r="10" fill="#E7DFCC"/>
+  <circle cx="355" cy="242" r="10" fill="#E7DFCC"/>
+  <path d="M256 144L320 110L384 144" stroke="#DFB263" stroke-width="12" stroke-linecap="round"/>
+  <text x="320" y="572" fill="#E7DFCC" font-family="Inter, Arial, sans-serif" font-size="28" text-anchor="middle">SHADOW SCOUT</text>
+</svg>

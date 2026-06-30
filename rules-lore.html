@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rules and Lore | Pagkamakabayan ay Maurag</title>
+  <meta name="description" content="Rules and lore page for a static Game of the Generals website.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+</head>
+<body data-page="rules">
+  <div class="site-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <p class="eyebrow">Archive of Doctrine</p>
+        <h1>Rules & Lore</h1>
+        <p class="brand-copy">A compact campaign dossier explaining the game's structure, what makes it culturally resonant, and how the site's visual fiction interprets it.</p>
+      </div>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
+
+      <nav id="site-nav" class="site-nav">
+        <a href="./index.html" data-nav-link>Command Deck</a>
+        <a href="./setup.html" data-nav-link>Setup Page</a>
+        <a href="./battle.html" data-nav-link>Battle UI</a>
+        <a href="./rules-lore.html" data-nav-link>Rules & Lore</a>
+      </nav>
+
+      <section class="sidebar-panel">
+        <p class="panel-label">Lore Lens</p>
+        <p class="muted">The site does not rewrite official history. Instead, it uses comic tension, archival motifs, and patriotic language to dramatize a beloved strategy game.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Core Understanding</p>
+          <h2>Game of the Generals is a duel of hidden information, nerve, and memory.</h2>
+        </div>
+        <div class="lore-grid">
+          <article class="feature-card">
+            <h3>Objective</h3>
+            <p>Win by capturing the enemy flag or escorting your own flag to the opponent's back rank without interception.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Hidden Ranks</h3>
+            <p>Each piece carries a secret identity. Players infer strength from movement, sacrifice patterns, and psychological rhythm.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Resolution</h3>
+            <p>When units meet, ranks are revealed and compared. Higher ranks prevail, except for special counters like the spy and private.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Character</h3>
+            <p>The game feels military in structure but theatrical in practice. Bluffing becomes story, and every reveal becomes a panel turn.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Doctrine File</p>
+          <h3>Expandable rules notes</h3>
+        </div>
+        <div class="accordion-list">
+          <details open>
+            <summary>How the opening arrangement shapes the entire match</summary>
+            <p>Initial placement determines whether your army looks aggressive, cautious, or misleading. The most successful lineups conceal intent while preserving response options for the flag, spy, and high officers.</p>
+          </details>
+          <details>
+            <summary>Why deduction matters more than brute force</summary>
+            <p>Because ranks remain hidden until contact, the strongest player is not always the one with boldest attacks. The stronger player is the one who notices patterns, preserves uncertainty, and times reveals with discipline.</p>
+          </details>
+          <details>
+            <summary>The cultural tone behind this site's patriotic framing</summary>
+            <p>"Pagkamakabayan" here signals respect, duty, and collective memory. The site leans into civic atmosphere without claiming to be an official historical document or teaching aid.</p>
+          </details>
+          <details>
+            <summary>How the comic-book art direction supports the rules</summary>
+            <p>Heavy borders, caption boxes, textured gradients, and dramatic shadows make hidden-information play feel serialized and mythic. The UI becomes a stage where inference reads like a cliffhanger.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="dual-panel">
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Difficulty Lore</p>
+            <h3>CPU personalities as voice and pressure</h3>
+          </div>
+          <div class="difficulty-grid" data-difficulty-grid></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Customization Folders</p>
+            <h3>What each folder is meant to hold</h3>
+          </div>
+          <ul class="timeline-list">
+            <li><code>./custom/portraits</code> for character art used in headers and commander notes.</li>
+            <li><code>./custom/banners</code> for heraldic or patriotic scene backdrops.</li>
+            <li><code>./custom/board-skins</code> for board textures and panel overlays.</li>
+            <li><code>./custom/ui-icons</code> for symbolic emblems, seals, and navigation motifs.</li>
+            <li><code>./custom/battlefx</code> for overlays such as fog, sparks, map sweeps, and impact graphics.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/data/assets-manifest.js"></script>
+  <script src="./assets/js/asset-loader.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>

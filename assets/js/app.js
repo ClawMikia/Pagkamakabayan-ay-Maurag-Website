@@ -1,0 +1,652 @@
+const difficultyProfiles = {
+  "Anak": {
+    pressure: "Low pressure",
+    tone: "Warm tutorial cadence",
+    description: "Learns slowly, telegraphs intent, and gives space for new players to understand hidden-rank tempo.",
+    doctrine: "Use this mode to study safe openings and basic bluff recognition."
+  },
+  "Mabalos / Salamat": {
+    pressure: "Measured pressure",
+    tone: "Polite but alert",
+    description: "Punishes obvious patterns, values positioning, and rewards players who can maintain composure.",
+    doctrine: "Ideal for intermediate practice and respectful escalation."
+  },
+  "Maurag po Ako": {
+    pressure: "Assertive pressure",
+    tone: "Confident tactical theater",
+    description: "Bluffs often, probes weak lanes, and reshapes tempo with confident counterplay.",
+    doctrine: "Best for players who want dramatic but readable mind games."
+  },
+  "Mahal ko ang Bayan": {
+    pressure: "Elite pressure",
+    tone: "Patriotic iron nerve",
+    description: "Calculates sacrifice chains, protects long-term deception, and feels like a relentless command staff.",
+    doctrine: "Built for experienced players who want minimal mercy and maximal adaptation."
+  }
+};
+
+const battleFeedOptions = [
+  "Scout line shifts left, forcing a private to reveal its patience.",
+  "General shadow detected near midfield. Counter-probe recommended.",
+  "Banner sweep intensifies the north corridor with comic-book tension.",
+  "False retreat suspected. Preserve the spy until certainty improves.",
+  "Rear guard pauses. Flag route remains plausible but not confirmed."
+];
+
+const STORAGE_KEY = "pagkamakabayanSetup";
+const STOPWATCH_KEY = "pagkamakabayanStopwatch";
+
+const setupCarouselDefinitions = [
+  { key: "flag", category: "country-flags", emptyLabel: "No flags found yet." },
+  { key: "rankCharacters", category: "rank-characters", emptyLabel: "No rank character packs found yet." },
+  { key: "pieceDesign", category: "piece-designs", emptyLabel: "No piece designs found yet." },
+  { key: "pieceColor", category: "piece-colors", emptyLabel: "No piece color skins found yet." },
+  { key: "board", category: "board-skins", emptyLabel: "No board skins found yet." },
+  { key: "portrait", category: "portraits", emptyLabel: "No commander portraits found yet." }
+];
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const manifest = await window.siteAssets;
+  setActiveNav();
+  setupResponsiveNav();
+  renderDifficultyGrids();
+  populateAssetPreviews(manifest);
+  initSetupPage(manifest);
+  initBattlePage(manifest);
+});
+
+function setActiveNav() {
+  const page = document.body.dataset.page;
+  document.querySelectorAll("[data-nav-link]").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    const isActive =
+      (page === "home" && href.endsWith("index.html")) ||
+      href.includes(`${page}.html`);
+    link.classList.toggle("is-active", isActive);
+  });
+}
+
+function setupResponsiveNav() {
+  const toggle = document.querySelector("[data-nav-toggle]");
+  const nav = document.getElementById("site-nav");
+  if (!toggle || !nav) return;
+
+  toggle.addEventListener("click", () => {
+    const nextState = !nav.classList.contains("is-open");
+    nav.classList.toggle("is-open", nextState);
+    toggle.setAttribute("aria-expanded", String(nextState));
+  });
+}
+
+function renderDifficultyGrids() {
+  document.querySelectorAll("[data-difficulty-grid]").forEach((grid) => {
+    grid.innerHTML = Object.entries(difficultyProfiles)
+      .map(([name, profile]) => `
+        <article class="difficulty-card">
+          <h4>${name}</h4>
+          <p>${profile.description}</p>
+          <span class="difficulty-meta">${profile.pressure} · ${profile.tone}</span>
+        </article>
+      `)
+      .join("");
+  });
+}
+
+function populateAssetPreviews(manifest) {
+  const previewRoot = document.querySelector("[data-asset-preview]");
+  if (!previewRoot) return;
+
+  const categories = [
+    "country-flags",
+    "rank-characters",
+    "piece-designs",
+    "piece-colors",
+    "board-skins",
+    "portraits",
+    "battlefx"
+  ];
+
+  previewRoot.innerHTML = categories
+    .map((category) => {
+      const asset = window.PagkamakabayanAssets.firstAsset(manifest, category);
+      if (!asset) {
+        return `
+          <article class="asset-card">
+            <div class="asset-card__meta">
+              <strong>${window.PagkamakabayanAssets.normalizeName(category)}</strong>
+              <span class="asset-card__tag">0 assets</span>
+            </div>
+            <div class="empty-state">Run refresh-assets.ps1 after dropping files into ./custom/${category}.</div>
+          </article>
+        `;
+      }
+      return createAssetCardMarkup(category, asset, manifest.counts?.[category] || 1);
+    })
+    .join("");
+}
+
+function createAssetCardMarkup(category, asset, count) {
+  return `
+    <article class="asset-card">
+      <div class="asset-card__meta">
+        <strong>${window.PagkamakabayanAssets.normalizeName(category)}</strong>
+        <span class="asset-card__tag">${count} asset${count === 1 ? "" : "s"}</span>
+      </div>
+      <div class="asset-card__preview">
+        <img src="${asset.url}" alt="${asset.label || asset.fileName}">
+      </div>
+      <p class="muted">${asset.label || window.PagkamakabayanAssets.normalizeName(asset.fileName)}</p>
+    </article>
+  `;
+}
+
+function initSetupPage(manifest) {
+  const form = document.querySelector("[data-setup-form]");
+  if (!form) return;
+
+  const difficultySelect = document.querySelector("[data-difficulty-select]");
+  const factionSelect = form.querySelector('[name="faction"]');
+  const briefingButton = document.querySelector("[data-generate-briefing]");
+  const summary = document.querySelector("[data-setup-summary]");
+  const difficultyFocus = document.querySelector("[data-difficulty-focus]");
+  const showcaseRoots = {
+    flags: document.querySelector("[data-flag-showcase]"),
+    ranks: document.querySelector("[data-rank-showcase]"),
+    pieces: document.querySelector("[data-piece-showcase]"),
+    boards: document.querySelector("[data-board-showcase]"),
+    portraits: document.querySelector("[data-portrait-showcase]")
+  };
+
+  const savedSetup = readSavedSetup();
+  if (savedSetup.difficulty && difficultyProfiles[savedSetup.difficulty]) {
+    difficultySelect.value = savedSetup.difficulty;
+  }
+  if (savedSetup.faction && factionSelect.querySelector(`option[value="${savedSetup.faction}"]`)) {
+    factionSelect.value = savedSetup.faction;
+  }
+
+  const carousels = {};
+  setupCarouselDefinitions.forEach((definition) => {
+    const root = document.querySelector(`[data-option-carousel="${definition.key}"]`);
+    const hiddenInput = document.querySelector(`[data-option-input="${definition.key}"]`);
+    carousels[definition.key] = createSetupCarousel({
+      root,
+      hiddenInput,
+      assets: manifest.assets?.[definition.category] || [],
+      savedValue: savedSetup[definition.key],
+      emptyLabel: definition.emptyLabel,
+      onChange: () => {
+        syncSetup();
+        renderSetupSummary(summary, form, difficultySelect, carousels);
+      }
+    });
+  });
+
+  function syncSetup() {
+    saveSetup(collectSetupState(form, difficultySelect, carousels));
+  }
+
+  renderDifficultyFocus(difficultyFocus, difficultySelect.value);
+  renderAssetShowcase(showcaseRoots.flags, manifest.assets?.["country-flags"]);
+  renderAssetShowcase(showcaseRoots.ranks, manifest.assets?.["rank-characters"]);
+  renderCombinedShowcase(showcaseRoots.pieces, [
+    ...(manifest.assets?.["piece-designs"] || []),
+    ...(manifest.assets?.["piece-colors"] || [])
+  ]);
+  renderAssetShowcase(showcaseRoots.boards, manifest.assets?.["board-skins"]);
+  renderAssetShowcase(showcaseRoots.portraits, manifest.assets?.portraits);
+  renderSetupSummary(summary, form, difficultySelect, carousels);
+
+  difficultySelect.addEventListener("change", () => {
+    renderDifficultyFocus(difficultyFocus, difficultySelect.value);
+    syncSetup();
+    renderSetupSummary(summary, form, difficultySelect, carousels);
+  });
+
+  factionSelect.addEventListener("change", () => {
+    syncSetup();
+    renderSetupSummary(summary, form, difficultySelect, carousels);
+  });
+
+  briefingButton?.addEventListener("click", () => {
+    const setup = collectSetupState(form, difficultySelect, carousels);
+    saveSetup(setup);
+    renderSetupSummary(summary, form, difficultySelect, carousels, setup);
+  });
+}
+
+function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel, onChange }) {
+  let currentIndex = Math.max(0, assets.findIndex((asset) => asset.fileName === savedValue));
+  if (currentIndex === -1) currentIndex = 0;
+
+  if (!root || !hiddenInput) {
+    return {
+      getSelectedAsset: () => null,
+      getSelectedLabel: () => "none selected",
+      getSelectedValue: () => ""
+    };
+  }
+
+  if (!assets.length) {
+    hiddenInput.value = "";
+    root.innerHTML = `<div class="empty-state">${emptyLabel} Add images and run refresh-assets.ps1.</div>`;
+    return {
+      getSelectedAsset: () => null,
+      getSelectedLabel: () => "none selected",
+      getSelectedValue: () => ""
+    };
+  }
+
+  root.innerHTML = `
+    <div class="visual-carousel">
+      <button class="visual-carousel__button" type="button" data-carousel-prev aria-label="Previous option">Previous</button>
+      <div class="visual-carousel__viewport">
+        <div class="visual-carousel__side visual-carousel__side--prev" data-carousel-prev-card></div>
+        <div class="visual-carousel__main">
+          <div class="visual-carousel__frame" data-carousel-main-card></div>
+          <div class="visual-carousel__meta">
+            <strong data-carousel-title></strong>
+            <span data-carousel-count></span>
+          </div>
+          <div class="visual-carousel__dots" data-carousel-dots></div>
+        </div>
+        <div class="visual-carousel__side visual-carousel__side--next" data-carousel-next-card></div>
+      </div>
+      <button class="visual-carousel__button" type="button" data-carousel-next aria-label="Next option">Next</button>
+    </div>
+  `;
+
+  const prevButton = root.querySelector("[data-carousel-prev]");
+  const nextButton = root.querySelector("[data-carousel-next]");
+  const prevCard = root.querySelector("[data-carousel-prev-card]");
+  const nextCard = root.querySelector("[data-carousel-next-card]");
+  const mainCard = root.querySelector("[data-carousel-main-card]");
+  const title = root.querySelector("[data-carousel-title]");
+  const count = root.querySelector("[data-carousel-count]");
+  const dots = root.querySelector("[data-carousel-dots]");
+
+  const render = () => {
+    const currentAsset = assets[currentIndex];
+    const previousAsset = assets[(currentIndex - 1 + assets.length) % assets.length];
+    const nextAsset = assets[(currentIndex + 1) % assets.length];
+
+    hiddenInput.value = currentAsset.fileName;
+    title.textContent = currentAsset.label || window.PagkamakabayanAssets.normalizeName(currentAsset.fileName);
+    count.textContent = `${currentIndex + 1} of ${assets.length}`;
+    mainCard.innerHTML = renderCarouselCard(currentAsset, "Current");
+    prevCard.innerHTML = renderCarouselCard(previousAsset, "Previous");
+    nextCard.innerHTML = renderCarouselCard(nextAsset, "Next");
+    dots.innerHTML = assets
+      .map((asset, index) => `<button class="visual-carousel__dot${index === currentIndex ? " is-active" : ""}" type="button" data-carousel-dot="${index}" aria-label="Select ${asset.label || asset.fileName}"></button>`)
+      .join("");
+
+    dots.querySelectorAll("[data-carousel-dot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        currentIndex = Number(button.dataset.carouselDot);
+        render();
+        onChange?.();
+      });
+    });
+  };
+
+  prevButton?.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + assets.length) % assets.length;
+    render();
+    onChange?.();
+  });
+
+  nextButton?.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % assets.length;
+    render();
+    onChange?.();
+  });
+
+  render();
+
+  return {
+    getSelectedAsset: () => assets[currentIndex] || null,
+    getSelectedLabel: () => assets[currentIndex]?.label || window.PagkamakabayanAssets.normalizeName(assets[currentIndex]?.fileName || "none"),
+    getSelectedValue: () => assets[currentIndex]?.fileName || ""
+  };
+}
+
+function renderCarouselCard(asset, prefix) {
+  if (!asset) {
+    return `<div class="visual-carousel__card visual-carousel__card--empty"><span>No preview</span></div>`;
+  }
+
+  return `
+    <div class="visual-carousel__card">
+      <img src="${asset.url}" alt="${asset.label || asset.fileName}">
+      <span class="visual-carousel__caption">${prefix}: ${asset.label || window.PagkamakabayanAssets.normalizeName(asset.fileName)}</span>
+    </div>
+  `;
+}
+
+function collectSetupState(form, difficultySelect, carousels) {
+  const formData = new FormData(form);
+  return {
+    faction: String(formData.get("faction") || ""),
+    difficulty: difficultySelect.value,
+    flag: carousels.flag.getSelectedValue(),
+    rankCharacters: carousels.rankCharacters.getSelectedValue(),
+    pieceDesign: carousels.pieceDesign.getSelectedValue(),
+    pieceColor: carousels.pieceColor.getSelectedValue(),
+    board: carousels.board.getSelectedValue(),
+    portrait: carousels.portrait.getSelectedValue(),
+    modifiers: getModifierLabels(formData)
+  };
+}
+
+function getModifierLabels(formData) {
+  return ["fog", "initiative", "history"]
+    .filter((name) => formData.get(name))
+    .map((name) => ({
+      fog: "full fog-of-war",
+      initiative: "captioned initiative",
+      history: "intermission lore notes"
+    }[name]));
+}
+
+function renderDifficultyFocus(root, key) {
+  if (!root || !difficultyProfiles[key]) return;
+  const profile = difficultyProfiles[key];
+  root.innerHTML = `
+    <span class="difficulty-focus__badge">${profile.pressure}</span>
+    <strong>${key}</strong>
+    <p>${profile.description}</p>
+    <p class="muted">${profile.doctrine}</p>
+  `;
+}
+
+function renderAssetShowcase(root, assets = []) {
+  if (!root) return;
+  if (!assets.length) {
+    root.innerHTML = `<div class="empty-state">No assets loaded yet. Add files and run refresh-assets.ps1.</div>`;
+    return;
+  }
+
+  root.innerHTML = assets
+    .map((asset) => createAssetCardMarkup(asset.category, asset, assets.length))
+    .join("");
+}
+
+function renderCombinedShowcase(root, assets = []) {
+  if (!root) return;
+  if (!assets.length) {
+    root.innerHTML = `<div class="empty-state">No piece skins loaded yet. Add files and run refresh-assets.ps1.</div>`;
+    return;
+  }
+
+  root.innerHTML = assets
+    .map((asset) => createAssetCardMarkup(asset.category, asset, 1))
+    .join("");
+}
+
+function renderSetupSummary(summary, form, difficultySelect, carousels, savedSetup = null) {
+  if (!summary || !form) return;
+  const setup = savedSetup || collectSetupState(form, difficultySelect, carousels);
+
+  summary.innerHTML = `
+    <strong>${setup.faction || "archival"} doctrine engaged.</strong>
+    <p>Difficulty: <strong>${difficultySelect.value}</strong>. Board: <strong>${carousels.board.getSelectedLabel()}</strong>. Flag: <strong>${carousels.flag.getSelectedLabel()}</strong>.</p>
+    <p>Rank characters: <strong>${carousels.rankCharacters.getSelectedLabel()}</strong>. Piece design: <strong>${carousels.pieceDesign.getSelectedLabel()}</strong>. Piece color: <strong>${carousels.pieceColor.getSelectedLabel()}</strong>.</p>
+    <p>Commander portrait: <strong>${carousels.portrait.getSelectedLabel()}</strong>. Modifiers: ${setup.modifiers.length ? setup.modifiers.join(", ") : "none"}.</p>
+    <p class="muted">Selections are saved locally in the browser so the battle page can reflect the chosen images and the carousels remain dynamic whenever you add or replace assets in the folders.</p>
+  `;
+}
+
+function initBattlePage(manifest) {
+  const gridRoot = document.querySelector("[data-battle-grid]");
+  if (!gridRoot) return;
+
+  const focus = document.querySelector("[data-battle-difficulty-focus]");
+  const select = document.querySelector("[data-battle-difficulty]");
+  const feedRoot = document.querySelector("[data-feed-list]");
+  const feedButton = document.querySelector("[data-randomize-feed]");
+  const skinSwatch = document.querySelector("[data-board-skin-swatch]");
+  const battleFxShowcase = document.querySelector("[data-battlefx-showcase]");
+  const savedSetup = readSavedSetup();
+
+  if (savedSetup.difficulty && difficultyProfiles[savedSetup.difficulty]) {
+    select.value = savedSetup.difficulty;
+  }
+
+  renderDifficultyFocus(focus, select.value);
+  select.addEventListener("change", () => {
+    renderDifficultyFocus(focus, select.value);
+    saveSetup({ difficulty: select.value });
+  });
+
+  const chosenBoard = resolveSelectedAsset(manifest, "board-skins", savedSetup.board);
+  const chosenFlag = resolveSelectedAsset(manifest, "country-flags", savedSetup.flag);
+  const chosenRank = resolveSelectedAsset(manifest, "rank-characters", savedSetup.rankCharacters);
+  const chosenPieceDesign = resolveSelectedAsset(manifest, "piece-designs", savedSetup.pieceDesign);
+  const chosenPieceColor = resolveSelectedAsset(manifest, "piece-colors", savedSetup.pieceColor);
+  const chosenBattleFx = resolveSelectedAsset(manifest, "battlefx");
+
+  if (chosenBoard && skinSwatch) {
+    skinSwatch.style.backgroundImage = `url('${chosenBoard.url}')`;
+  }
+
+  renderBattleGrid(gridRoot, {
+    flag: chosenFlag,
+    rankCharacters: chosenRank,
+    pieceDesign: chosenPieceDesign,
+    pieceColor: chosenPieceColor
+  });
+
+  renderFeed(feedRoot);
+  feedButton?.addEventListener("click", () => renderFeed(feedRoot, true));
+
+  renderCombinedShowcase(battleFxShowcase, [
+    chosenFlag,
+    chosenRank,
+    chosenPieceDesign,
+    chosenPieceColor,
+    chosenBattleFx
+  ].filter(Boolean));
+
+  initStopwatch();
+}
+
+function initStopwatch() {
+  const display = document.querySelector("[data-stopwatch-display]");
+  const startButton = document.querySelector("[data-stopwatch-start]");
+  const pauseButton = document.querySelector("[data-stopwatch-pause]");
+  const resetButton = document.querySelector("[data-stopwatch-reset]");
+  if (!display || !startButton || !pauseButton || !resetButton) return;
+
+  const state = readStopwatchState();
+
+  const render = () => {
+    display.textContent = formatStopwatch(getLiveElapsed(state));
+    startButton.disabled = state.running;
+    pauseButton.disabled = !state.running;
+  };
+
+  const tick = window.setInterval(() => {
+    render();
+    persistStopwatchState(state);
+  }, 250);
+
+  startButton.addEventListener("click", () => {
+    if (state.running) return;
+    state.running = true;
+    state.startedAt = Date.now();
+    persistStopwatchState(state);
+    render();
+  });
+
+  pauseButton.addEventListener("click", () => {
+    if (!state.running) return;
+    state.elapsedMs = getLiveElapsed(state);
+    state.running = false;
+    state.startedAt = null;
+    persistStopwatchState(state);
+    render();
+  });
+
+  resetButton.addEventListener("click", () => {
+    state.elapsedMs = 0;
+    state.running = false;
+    state.startedAt = null;
+    persistStopwatchState(state);
+    render();
+  });
+
+  window.addEventListener("beforeunload", () => {
+    persistStopwatchState(state);
+    window.clearInterval(tick);
+  });
+
+  if (!state.initialized) {
+    state.running = true;
+    state.startedAt = Date.now();
+    state.initialized = true;
+    persistStopwatchState(state);
+  }
+
+  render();
+}
+
+function getLiveElapsed(state) {
+  if (!state.running || !state.startedAt) {
+    return state.elapsedMs;
+  }
+  return state.elapsedMs + (Date.now() - state.startedAt);
+}
+
+function formatStopwatch(milliseconds) {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+  }
+
+  return [minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+}
+
+function readStopwatchState() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STOPWATCH_KEY) || "{}");
+    return {
+      elapsedMs: Number(parsed.elapsedMs) || 0,
+      running: Boolean(parsed.running),
+      startedAt: parsed.startedAt ? Number(parsed.startedAt) : null,
+      initialized: Boolean(parsed.initialized)
+    };
+  } catch (error) {
+    return {
+      elapsedMs: 0,
+      running: false,
+      startedAt: null,
+      initialized: false
+    };
+  }
+}
+
+function persistStopwatchState(state) {
+  const liveState = {
+    elapsedMs: state.running ? state.elapsedMs : getLiveElapsed(state),
+    running: state.running,
+    startedAt: state.running ? state.startedAt : null,
+    initialized: true
+  };
+  localStorage.setItem(STOPWATCH_KEY, JSON.stringify(liveState));
+}
+
+function renderBattleGrid(root, selectedAssets) {
+  const board = [
+    ["FR", "", "", "", "WN", "", "", "", "HR"],
+    ["", "", "SC", "", "", "", "RK", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "", "", "SP", "", "", "", "", ""],
+    ["", "", "", "", "??", "", "", "", ""],
+    ["", "", "", "", "", "PV", "", "", ""],
+    ["", "", "", "", "", "", "", "", ""],
+    ["", "GN", "", "", "", "", "PT", "", ""],
+    ["FL", "", "", "", "MV", "", "", "", "AL"]
+  ];
+
+  root.innerHTML = board
+    .flatMap((row, y) =>
+      row.map((token, x) => {
+        const state = token
+          ? y < 3
+            ? "hostile"
+            : y > 5
+              ? "friendly"
+              : "neutral"
+          : "";
+
+        if (!token) {
+          return `<div class="cell" aria-label="cell ${x + 1}-${y + 1}"></div>`;
+        }
+
+        const designLayer = selectedAssets.pieceDesign
+          ? `<div class="piece-art piece-art--design" style="background-image:url('${selectedAssets.pieceDesign.url}')"></div>`
+          : "";
+        const colorLayer = selectedAssets.pieceColor
+          ? `<div class="piece-art piece-art--color" style="background-image:url('${selectedAssets.pieceColor.url}')"></div>`
+          : "";
+        const rankLayer = selectedAssets.rankCharacters
+          ? `<div class="piece-art piece-art--rank" style="background-image:url('${selectedAssets.rankCharacters.url}')"></div>`
+          : "";
+        const flagBadge = selectedAssets.flag
+          ? `<div class="piece-badge"><img src="${selectedAssets.flag.url}" alt="${selectedAssets.flag.label || selectedAssets.flag.fileName}"></div>`
+          : "";
+
+        return `
+          <div class="cell cell--${state}" aria-label="cell ${x + 1}-${y + 1}">
+            <div class="piece-frame">
+              ${designLayer}
+              ${colorLayer}
+              ${rankLayer}
+              ${flagBadge}
+              <span class="piece-label">${token}</span>
+            </div>
+          </div>
+        `;
+      })
+    )
+    .join("");
+}
+
+function resolveSelectedAsset(manifest, category, fileName = "") {
+  const assets = manifest?.assets?.[category] || [];
+  if (!assets.length) return null;
+  return assets.find((asset) => asset.fileName === fileName) || assets[0];
+}
+
+function readSavedSetup() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveSetup(payload) {
+  const nextValue = { ...readSavedSetup(), ...payload };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextValue));
+}
+
+function renderFeed(root, shuffle = false) {
+  if (!root) return;
+  const feed = shuffle
+    ? [...battleFeedOptions].sort(() => Math.random() - 0.5).slice(0, 4)
+    : battleFeedOptions.slice(0, 4);
+
+  root.innerHTML = feed
+    .map((item, index) => `
+      <article class="feed-entry">
+        <strong>Dispatch ${index + 1}</strong>
+        <span>${item}</span>
+      </article>
+    `)
+    .join("");
+}
