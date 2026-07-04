@@ -1,17 +1,17 @@
 window.PagkamakabayanAssetManifest = {
     "generatedAt":  "2026-06-30T19:41:28.7606466Z",
     "root":  "./custom",
-    "counts":  {
+"counts":  {
                    "country-flags":  11,
-                   "rank-characters":  1,
-                   "piece-designs":  1,
-                   "piece-colors":  1,
-                   "board-skins":  2,
-                   "portraits":  2,
-                   "banners":  1,
-                   "ui-icons":  1,
-                   "battlefx":  1
-               },
+                    "rank-characters":  1,
+                    "piece-designs":  1,
+                    "piece-colors":  1,
+                    "board-skins":  10,
+                    "portraits":  2,
+                    "banners":  1,
+                    "ui-icons":  1,
+                    "battlefx":  1
+                },
     "assets":  {
                    "country-flags":  [
                                          {
@@ -105,20 +105,68 @@ window.PagkamakabayanAssetManifest = {
                                             "url":  "./custom/piece-colors/verdigris-tint.png"
                                         }
                                     ],
-                   "board-skins":  [
-                                       {
-                                           "category":  "board-skins",
-                                           "fileName":  "aurora-grid.png",
-                                           "label":  "Aurora Grid",
-                                           "url":  "./custom/board-skins/aurora-grid.png"
-                                       },
-                                       {
-                                           "category":  "board-skins",
-                                           "fileName":  "fortress-sepia.png",
-                                           "label":  "Fortress Sepia",
-                                           "url":  "./custom/board-skins/fortress-sepia.png"
-                                       }
-                                   ],
+"board-skins":  [
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 1.png",
+                                            "label":  "Board 1",
+                                            "url":  "./custom/board-skins/Board 1.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 2.png",
+                                            "label":  "Board 2",
+                                            "url":  "./custom/board-skins/Board 2.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 3.png",
+                                            "label":  "Board 3",
+                                            "url":  "./custom/board-skins/Board 3.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 4.png",
+                                            "label":  "Board 4",
+                                            "url":  "./custom/board-skins/Board 4.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 5.png",
+                                            "label":  "Board 5",
+                                            "url":  "./custom/board-skins/Board 5.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 6.png",
+                                            "label":  "Board 6",
+                                            "url":  "./custom/board-skins/Board 6.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 7.png",
+                                            "label":  "Board 7",
+                                            "url":  "./custom/board-skins/Board 7.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 8.png",
+                                            "label":  "Board 8",
+                                            "url":  "./custom/board-skins/Board 8.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 9.png",
+                                            "label":  "Board 9",
+                                            "url":  "./custom/board-skins/Board 9.png"
+                                        },
+                                        {
+                                            "category":  "board-skins",
+                                            "fileName":  "Board 10.png",
+                                            "label":  "Board 10",
+                                            "url":  "./custom/board-skins/Board 10.png"
+                                        }
+                                    ],
                    "portraits":  [
                                      {
                                          "category":  "portraits",

@@ -169,17 +169,32 @@ function initSetupPage(manifest) {
   setupCarouselDefinitions.forEach((definition) => {
     const root = document.querySelector(`[data-option-carousel="${definition.key}"]`);
     const hiddenInput = document.querySelector(`[data-option-input="${definition.key}"]`);
-    carousels[definition.key] = createSetupCarousel({
-      root,
-      hiddenInput,
-      assets: manifest.assets?.[definition.category] || [],
-      savedValue: savedSetup[definition.key],
-      emptyLabel: definition.emptyLabel,
-      onChange: () => {
-        syncSetup();
-        renderSetupSummary(summary, form, difficultySelect, carousels);
-      }
-    });
+
+    if (definition.key === "pieceColor") {
+      carousels[definition.key] = createColorPicker({
+        root,
+        hiddenInput,
+        assets: manifest.assets?.[definition.category] || [],
+        savedValue: savedSetup.pieceColor,
+        emptyLabel: definition.emptyLabel,
+        onChange: () => {
+          syncSetup();
+          renderSetupSummary(summary, form, difficultySelect, carousels);
+        }
+      });
+    } else {
+      carousels[definition.key] = createSetupCarousel({
+        root,
+        hiddenInput,
+        assets: manifest.assets?.[definition.category] || [],
+        savedValue: savedSetup[definition.key],
+        emptyLabel: definition.emptyLabel,
+        onChange: () => {
+          syncSetup();
+          renderSetupSummary(summary, form, difficultySelect, carousels);
+        }
+      });
+    }
   });
 
   function syncSetup() {
@@ -310,6 +325,198 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   };
 }
 
+function createColorPicker({ root, hiddenInput, assets, savedValue, emptyLabel, onChange }) {
+  const swatches = [...(assets || [])];
+  const isHexColor = (value) => typeof value === "string" && value.startsWith("#");
+  const selectedColor = isHexColor(savedValue) ? savedValue : null;
+  const selectedFile = !isHexColor(savedValue) ? savedValue : null;
+  let currentFileIndex = selectedFile
+    ? Math.max(0, swatches.findIndex((asset) => asset.fileName === selectedFile))
+    : -1;
+  if (selectedFile && currentFileIndex === -1) currentFileIndex = 0;
+
+  if (!root || !hiddenInput) {
+    return {
+      getSelectedAsset: () => swatches[currentFileIndex] || null,
+      getSelectedLabel: () => selectedColor || swatches[currentFileIndex]?.label || "none",
+      getSelectedValue: () => selectedColor || swatches[currentFileIndex]?.fileName || ""
+    };
+  }
+
+  if (!swatches.length) {
+    root.innerHTML = `
+      <div class="color-picker-row">
+        <label class="color-custom-label">Custom</label>
+        <input type="color" value="${selectedColor || "#e9e1cd"}" data-color-picker-input>
+        <span class="color-hex-value" data-color-hex-value>${selectedColor || "folder tint"}</span>
+      </div>
+      <div class="visual-carousel">
+        <div class="visual-carousel__viewport">
+          <div class="visual-carousel__main">
+            <div class="empty-state">${emptyLabel}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const colorInput = root.querySelector("[data-color-picker-input]");
+    const hexValue = root.querySelector("[data-color-hex-value]");
+
+    colorInput?.addEventListener("input", () => {
+      selectedColor = colorInput.value;
+      if (hexValue) hexValue.textContent = selectedColor;
+      hiddenInput.value = selectedColor;
+      onChange?.();
+    });
+
+    colorInput?.addEventListener("change", () => {
+      selectedColor = colorInput.value;
+      if (hexValue) hexValue.textContent = selectedColor;
+      hiddenInput.value = selectedColor;
+      onChange?.();
+    });
+
+    return {
+      getSelectedAsset: () => null,
+      getSelectedLabel: () => selectedColor || "no color selected",
+      getSelectedValue: () => selectedColor || ""
+    };
+  }
+
+  root.innerHTML = `
+    <div class="color-picker-row">
+      <label class="color-custom-label">Custom</label>
+      <input type="color" value="${selectedColor || "#e9e1cd"}" data-color-picker-input>
+      <span class="color-hex-value" data-color-hex-value>${selectedColor || "folder tint"}</span>
+    </div>
+    <div class="visual-carousel">
+      <button class="visual-carousel__button" type="button" data-color-prev aria-label="Previous color">Previous</button>
+      <div class="visual-carousel__viewport">
+        <div class="visual-carousel__side visual-carousel__side--prev" data-carousel-prev-card></div>
+        <div class="visual-carousel__main">
+          <div class="visual-carousel__frame" data-carousel-main-card></div>
+          <div class="visual-carousel__meta">
+            <strong data-carousel-title></strong>
+            <span data-carousel-count></span>
+          </div>
+          <div class="visual-carousel__dots" data-carousel-dots></div>
+        </div>
+        <div class="visual-carousel__side visual-carousel__side--next" data-carousel-next-card></div>
+      </div>
+      <button class="visual-carousel__button" type="button" data-color-next aria-label="Next color">Next</button>
+    </div>
+  `;
+
+  const prevButton = root.querySelector("[data-color-prev]");
+  const nextButton = root.querySelector("[data-color-next]");
+  const prevCard = root.querySelector("[data-carousel-prev-card]");
+  const nextCard = root.querySelector("[data-carousel-next-card]");
+  const mainCard = root.querySelector("[data-carousel-main-card]");
+  const title = root.querySelector("[data-carousel-title]");
+  const count = root.querySelector("[data-carousel-count]");
+  const dots = root.querySelector("[data-carousel-dots]");
+  const colorInput = root.querySelector("[data-color-picker-input]");
+  const hexValue = root.querySelector("[data-color-hex-value]");
+
+  dots?.addEventListener("click", (event) => {
+    const dot = event.target.closest("[data-carousel-dot]");
+    if (!dot) return;
+    currentFileIndex = Number(dot.dataset.carouselDot);
+    selectedColor = null;
+    if (colorInput) colorInput.value = "#e9e1cd";
+    if (hexValue) hexValue.textContent = "folder tint";
+    render();
+    onChange?.();
+  });
+
+  const render = () => {
+    if (selectedColor) {
+      hiddenInput.value = selectedColor;
+      title.textContent = `Custom ${selectedColor}`;
+      count.textContent = "1 of 1";
+      mainCard.innerHTML = `
+        <div class="visual-carousel__card">
+          <div class="piece-art piece-art--color" style="background-color:${selectedColor};"></div>
+          <span class="visual-carousel__caption">Custom tone</span>
+        </div>
+      `;
+      prevCard.innerHTML = `<div class="visual-carousel__card visual-carousel__card--empty"><span>Custom</span></div>`;
+      nextCard.innerHTML = `<div class="visual-carousel__card visual-carousel__card--empty"><span>Custom</span></div>`;
+      dots.innerHTML = swatches
+        .map((asset, index) => `<button class="visual-carousel__dot" type="button" data-carousel-dot="${index}" aria-label="Select ${asset.label || asset.fileName}"></button>`)
+        .join("");
+      return;
+    }
+
+    const currentAsset = swatches[currentFileIndex];
+    const previousAsset = swatches[(currentFileIndex - 1 + swatches.length) % swatches.length];
+    const nextAsset = swatches[(currentFileIndex + 1) % swatches.length];
+
+    hiddenInput.value = currentAsset.fileName;
+    title.textContent = currentAsset.label || window.PagkamakabayanAssets.normalizeName(currentAsset.fileName);
+    count.textContent = `${currentFileIndex + 1} of ${swatches.length}`;
+    mainCard.innerHTML = renderCarouselCard(currentAsset, "Current");
+    prevCard.innerHTML = renderCarouselCard(previousAsset, "Previous");
+    nextCard.innerHTML = renderCarouselCard(nextAsset, "Next");
+    dots.innerHTML = swatches
+      .map((asset, index) => `<button class="visual-carousel__dot${index === currentFileIndex ? " is-active" : ""}" type="button" data-carousel-dot="${index}" aria-label="Select ${asset.label || asset.fileName}"></button>`)
+      .join("");
+  };
+
+  const clearCustomColor = () => {
+    if (selectedColor) {
+      currentFileIndex = 0;
+    }
+    selectedColor = null;
+    if (colorInput) colorInput.value = "#e9e1cd";
+    if (hexValue) hexValue.textContent = "folder tint";
+  };
+
+  prevButton?.addEventListener("click", () => {
+    if (selectedColor) {
+      clearCustomColor();
+    }
+    if (swatches.length) {
+      currentFileIndex = (currentFileIndex - 1 + swatches.length) % swatches.length;
+    }
+    render();
+    onChange?.();
+  });
+
+  nextButton?.addEventListener("click", () => {
+    if (selectedColor) {
+      clearCustomColor();
+    }
+    if (swatches.length) {
+      currentFileIndex = (currentFileIndex + 1) % swatches.length;
+    }
+    render();
+    onChange?.();
+  });
+
+  colorInput?.addEventListener("input", () => {
+    selectedColor = colorInput.value;
+    if (hexValue) hexValue.textContent = selectedColor;
+    render();
+    onChange?.();
+  });
+
+  colorInput?.addEventListener("change", () => {
+    selectedColor = colorInput.value;
+    if (hexValue) hexValue.textContent = selectedColor;
+    render();
+    onChange?.();
+  });
+
+  render();
+
+  return {
+    getSelectedAsset: () => (selectedColor ? null : swatches[currentFileIndex]) || null,
+    getSelectedLabel: () => selectedColor || swatches[currentFileIndex]?.label || window.PagkamakabayanAssets.normalizeName(swatches[currentFileIndex]?.fileName || "none"),
+    getSelectedValue: () => selectedColor || swatches[currentFileIndex]?.fileName || ""
+  };
+}
+
 function renderCarouselCard(asset, prefix) {
   if (!asset) {
     return `<div class="visual-carousel__card visual-carousel__card--empty"><span>No preview</span></div>`;
@@ -422,7 +629,9 @@ function initBattlePage(manifest) {
   const chosenFlag = resolveSelectedAsset(manifest, "country-flags", savedSetup.flag);
   const chosenRank = resolveSelectedAsset(manifest, "rank-characters", savedSetup.rankCharacters);
   const chosenPieceDesign = resolveSelectedAsset(manifest, "piece-designs", savedSetup.pieceDesign);
-  const chosenPieceColor = resolveSelectedAsset(manifest, "piece-colors", savedSetup.pieceColor);
+  const chosenPieceColor = savedSetup.pieceColor?.startsWith("#")
+    ? { category: "piece-colors", url: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="${savedSetup.pieceColor}"/></svg>`)}`, fileName: savedSetup.pieceColor, label: `Custom tone ${savedSetup.pieceColor}` }
+    : resolveSelectedAsset(manifest, "piece-colors", savedSetup.pieceColor);
   const chosenBattleFx = resolveSelectedAsset(manifest, "battlefx");
 
   if (chosenBoard && skinSwatch) {
@@ -433,7 +642,7 @@ function initBattlePage(manifest) {
     flag: chosenFlag,
     rankCharacters: chosenRank,
     pieceDesign: chosenPieceDesign,
-    pieceColor: chosenPieceColor
+    pieceColor: savedSetup.pieceColor || (chosenPieceColor ? chosenPieceColor.fileName : null)
   });
 
   renderFeed(feedRoot);
@@ -591,7 +800,9 @@ function renderBattleGrid(root, selectedAssets) {
           ? `<div class="piece-art piece-art--design" style="background-image:url('${selectedAssets.pieceDesign.url}')"></div>`
           : "";
         const colorLayer = selectedAssets.pieceColor
-          ? `<div class="piece-art piece-art--color" style="background-image:url('${selectedAssets.pieceColor.url}')"></div>`
+          ? selectedAssets.pieceColor.startsWith("#")
+            ? `<div class="piece-art piece-art--color piece-art--color--custom" style="background-color:${selectedAssets.pieceColor};"></div>`
+            : `<div class="piece-art piece-art--color" style="background-image:url('${selectedAssets.pieceColor.url}')"></div>`
           : "";
         const rankLayer = selectedAssets.rankCharacters
           ? `<div class="piece-art piece-art--rank" style="background-image:url('${selectedAssets.rankCharacters.url}')"></div>`
