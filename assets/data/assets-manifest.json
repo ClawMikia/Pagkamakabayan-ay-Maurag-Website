@@ -1,16 +1,19 @@
 {
-    "generatedAt":  "2026-06-30T19:41:28.7606466Z",
+    "generatedAt":  "2026-07-07T20:42:19.7632315Z",
     "root":  "./custom",
     "counts":  {
                    "country-flags":  11,
-                   "rank-characters":  1,
-                   "piece-designs":  1,
-                   "piece-colors":  1,
-                   "board-skins":  2,
+                   "piece-colors":  0,
+                   "board-skins":  10,
                    "portraits":  2,
                    "banners":  1,
                    "ui-icons":  1,
-                   "battlefx":  1
+                   "battlefx":  1,
+                   "piece-designs":  15,
+                   "piece-designs-flag":  0,
+                   "piece-designs-regular":  0,
+                   "piece-designs-skirmish":  0,
+                   "piece-designs-sparring":  0
                },
     "assets":  {
                    "country-flags":  [
@@ -81,42 +84,69 @@
                                              "url":  "./custom/country-flags/United States.png"
                                          }
                                      ],
-                   "rank-characters":  [
-                                           {
-                                               "category":  "rank-characters",
-                                               "fileName":  "rank-commanders.png",
-                                               "label":  "Rank Commanders",
-                                               "url":  "./custom/rank-characters/rank-commanders.png"
-                                           }
-                                       ],
-                   "piece-designs":  [
-                                         {
-                                             "category":  "piece-designs",
-                                             "fileName":  "brass-shield.png",
-                                             "label":  "Brass Shield",
-                                             "url":  "./custom/piece-designs/brass-shield.png"
-                                         }
-                                     ],
                    "piece-colors":  [
-                                        {
-                                            "category":  "piece-colors",
-                                            "fileName":  "verdigris-tint.png",
-                                            "label":  "Verdigris Tint",
-                                            "url":  "./custom/piece-colors/verdigris-tint.png"
-                                        }
+
                                     ],
                    "board-skins":  [
                                        {
                                            "category":  "board-skins",
-                                           "fileName":  "aurora-grid.png",
-                                           "label":  "Aurora Grid",
-                                           "url":  "./custom/board-skins/aurora-grid.png"
+                                           "fileName":  "Board 1.png",
+                                           "label":  "Board 1",
+                                           "url":  "./custom/board-skins/Board 1.png"
                                        },
                                        {
                                            "category":  "board-skins",
-                                           "fileName":  "fortress-sepia.png",
-                                           "label":  "Fortress Sepia",
-                                           "url":  "./custom/board-skins/fortress-sepia.png"
+                                           "fileName":  "Board 10.png",
+                                           "label":  "Board 10",
+                                           "url":  "./custom/board-skins/Board 10.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 2.png",
+                                           "label":  "Board 2",
+                                           "url":  "./custom/board-skins/Board 2.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 3.png",
+                                           "label":  "Board 3",
+                                           "url":  "./custom/board-skins/Board 3.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 4.png",
+                                           "label":  "Board 4",
+                                           "url":  "./custom/board-skins/Board 4.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 5.png",
+                                           "label":  "Board 5",
+                                           "url":  "./custom/board-skins/Board 5.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 6.png",
+                                           "label":  "Board 6",
+                                           "url":  "./custom/board-skins/Board 6.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 7.png",
+                                           "label":  "Board 7",
+                                           "url":  "./custom/board-skins/Board 7.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 8.png",
+                                           "label":  "Board 8",
+                                           "url":  "./custom/board-skins/Board 8.png"
+                                       },
+                                       {
+                                           "category":  "board-skins",
+                                           "fileName":  "Board 9.png",
+                                           "label":  "Board 9",
+                                           "url":  "./custom/board-skins/Board 9.png"
                                        }
                                    ],
                    "portraits":  [
@@ -156,6 +186,110 @@
                                         "label":  "Fog Sweep",
                                         "url":  "./custom/battlefx/fog-sweep.png"
                                     }
-                                ]
+                                ],
+                   "piece-designs":  [
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "bagani.png",
+                                             "label":  "Bagani",
+                                             "url":  "./custom/piece-designs/frames/bagani.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "bayani.png",
+                                             "label":  "Bayani",
+                                             "url":  "./custom/piece-designs/frames/bayani.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "kabayanihan.png",
+                                             "label":  "Kabayanihan",
+                                             "url":  "./custom/piece-designs/frames/kabayanihan.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "kagitingan.png",
+                                             "label":  "Kagitingan",
+                                             "url":  "./custom/piece-designs/frames/kagitingan.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "kalasag.png",
+                                             "label":  "Kalasag",
+                                             "url":  "./custom/piece-designs/frames/kalasag.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "katapangan.png",
+                                             "label":  "Katapangan",
+                                             "url":  "./custom/piece-designs/frames/katapangan.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "lakas.png",
+                                             "label":  "Lakas",
+                                             "url":  "./custom/piece-designs/frames/lakas.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "lakas-loob.png",
+                                             "label":  "Lakas Loob",
+                                             "url":  "./custom/piece-designs/frames/lakas-loob.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "mandirigma.png",
+                                             "label":  "Mandirigma",
+                                             "url":  "./custom/piece-designs/frames/mandirigma.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "matapang.png",
+                                             "label":  "Matapang",
+                                             "url":  "./custom/piece-designs/frames/matapang.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "sigasig.png",
+                                             "label":  "Sigasig",
+                                             "url":  "./custom/piece-designs/frames/sigasig.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "tagapagtanggol.png",
+                                             "label":  "Tagapagtanggol",
+                                             "url":  "./custom/piece-designs/frames/tagapagtanggol.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "tapang.png",
+                                             "label":  "Tapang",
+                                             "url":  "./custom/piece-designs/frames/tapang.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "tapang-loob.png",
+                                             "label":  "Tapang Loob",
+                                             "url":  "./custom/piece-designs/frames/tapang-loob.png"
+                                         },
+                                         {
+                                             "category":  "piece-designs",
+                                             "fileName":  "tibay.png",
+                                             "label":  "Tibay",
+                                             "url":  "./custom/piece-designs/frames/tibay.png"
+                                         }
+                                     ],
+                   "piece-designs-flag":  [
+
+                                          ],
+                   "piece-designs-regular":  [
+
+                                             ],
+                   "piece-designs-skirmish":  [
+
+                                              ],
+                   "piece-designs-sparring":  [
+
+                                              ]
                }
 }

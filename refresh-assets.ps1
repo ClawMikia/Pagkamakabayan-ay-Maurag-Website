@@ -8,16 +8,23 @@ $customRoot = Join-Path $SiteRoot 'custom'
 $manifestPath = Join-Path $SiteRoot 'assets\data\assets-manifest.json'
 $manifestJsPath = Join-Path $SiteRoot 'assets\data\assets-manifest.js'
 $supportedExtensions = @('.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg')
-$categories = @(
+
+$flatCategories = @(
     'country-flags',
-    'rank-characters',
-    'piece-designs',
     'piece-colors',
     'board-skins',
     'portraits',
     'banners',
     'ui-icons',
     'battlefx'
+)
+
+$subfolderCategories = @(
+    @{ name = 'piece-designs'; label = 'Design Frames' }
+    @{ name = 'piece-designs-flag'; label = 'Flag Pieces' }
+    @{ name = 'piece-designs-regular'; label = 'Regular Force' }
+    @{ name = 'piece-designs-skirmish'; label = 'Skirmish Force' }
+    @{ name = 'piece-designs-sparring'; label = 'Sparring Variants' }
 )
 
 function Convert-ToLabel {
@@ -53,8 +60,15 @@ function Get-RelativeSiteUrl {
     return './' + $normalized
 }
 
-foreach ($category in $categories) {
-    $categoryPath = Join-Path $customRoot $category
+foreach ($item in $flatCategories) {
+    $categoryPath = Join-Path $customRoot $item
+    if (-not (Test-Path -LiteralPath $categoryPath)) {
+        New-Item -ItemType Directory -Path $categoryPath -Force | Out-Null
+    }
+}
+
+foreach ($item in $subfolderCategories) {
+    $categoryPath = Join-Path $customRoot $item.name
     if (-not (Test-Path -LiteralPath $categoryPath)) {
         New-Item -ItemType Directory -Path $categoryPath -Force | Out-Null
     }
@@ -63,11 +77,32 @@ foreach ($category in $categories) {
 $manifestAssets = [ordered]@{}
 $counts = [ordered]@{}
 
-foreach ($category in $categories) {
+foreach ($category in $flatCategories) {
     $categoryPath = Join-Path $customRoot $category
     $files = Get-ChildItem -LiteralPath $categoryPath -File |
         Where-Object { $supportedExtensions -contains $_.Extension.ToLowerInvariant() } |
         Sort-Object Name
+
+    $manifestAssets[$category] = @(
+        foreach ($file in $files) {
+            [ordered]@{
+                category = $category
+                fileName = $file.Name
+                label = Convert-ToLabel -Name $file.Name
+                url = Get-RelativeSiteUrl -Root $SiteRoot -FilePath $file.FullName
+            }
+        }
+    )
+
+    $counts[$category] = $manifestAssets[$category].Count
+}
+
+foreach ($entry in $subfolderCategories) {
+    $category = $entry.name
+    $categoryPath = Join-Path $customRoot $category
+    $files = Get-ChildItem -LiteralPath $categoryPath -File -Recurse |
+        Where-Object { $supportedExtensions -contains $_.Extension.ToLowerInvariant() } |
+        Sort-Object FullName
 
     $manifestAssets[$category] = @(
         foreach ($file in $files) {
@@ -97,6 +132,6 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 Write-Host "Asset manifest refreshed at $manifestPath"
 Write-Host "Script manifest refreshed at $manifestJsPath"
-foreach ($category in $categories) {
-    Write-Host (" - {0}: {1}" -f $category, $counts[$category])
+foreach ($key in $counts.Keys) {
+    Write-Host (" - {0}: {1}" -f $key, $counts[$key])
 }

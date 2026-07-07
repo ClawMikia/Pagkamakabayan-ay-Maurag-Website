@@ -38,11 +38,23 @@ const STOPWATCH_KEY = "pagkamakabayanStopwatch";
 
 const setupCarouselDefinitions = [
   { key: "flag", category: "country-flags", emptyLabel: "No flags found yet." },
-  { key: "rankCharacters", category: "rank-characters", emptyLabel: "No rank character packs found yet." },
+  { key: "fiveStarGeneral", category: "piece-designs-regular", emptyLabel: "No Five-Star General pieces found yet." },
+  { key: "fourStarGeneral", category: "piece-designs-regular", emptyLabel: "No Four-Star General pieces found yet." },
+  { key: "threeStarGeneral", category: "piece-designs-regular", emptyLabel: "No Three-Star General pieces found yet." },
+  { key: "twoStarGeneral", category: "piece-designs-regular", emptyLabel: "No Two-Star General pieces found yet." },
+  { key: "oneStarGeneral", category: "piece-designs-regular", emptyLabel: "No One-Star General pieces found yet." },
+  { key: "colonel", category: "piece-designs-regular", emptyLabel: "No Colonel pieces found yet." },
+  { key: "lieutenantColonel", category: "piece-designs-regular", emptyLabel: "No Lieutenant Colonel pieces found yet." },
+  { key: "major", category: "piece-designs-regular", emptyLabel: "No Major pieces found yet." },
+  { key: "captain", category: "piece-designs-regular", emptyLabel: "No Captain pieces found yet." },
+  { key: "firstLieutenant", category: "piece-designs-regular", emptyLabel: "No First Lieutenant pieces found yet." },
+  { key: "secondLieutenant", category: "piece-designs-regular", emptyLabel: "No Second Lieutenant pieces found yet." },
+  { key: "sergeant", category: "piece-designs-skirmish", emptyLabel: "No Sergeant pieces found yet." },
+  { key: "spy", category: "piece-designs-flag", emptyLabel: "No Spy pieces found yet." },
+  { key: "private", category: "piece-designs-skirmish", emptyLabel: "No Private pieces found yet." },
   { key: "pieceDesign", category: "piece-designs", emptyLabel: "No piece designs found yet." },
   { key: "pieceColor", category: "piece-colors", emptyLabel: "No piece color skins found yet." },
-  { key: "board", category: "board-skins", emptyLabel: "No board skins found yet." },
-  { key: "portrait", category: "portraits", emptyLabel: "No commander portraits found yet." }
+  { key: "board", category: "board-skins", emptyLabel: "No board skins found yet." }
 ];
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -98,7 +110,10 @@ function populateAssetPreviews(manifest) {
 
   const categories = [
     "country-flags",
-    "rank-characters",
+    "piece-designs-flag",
+    "piece-designs-regular",
+    "piece-designs-skirmish",
+    "piece-designs-sparring",
     "piece-designs",
     "piece-colors",
     "board-skins",
@@ -203,9 +218,18 @@ function initSetupPage(manifest) {
 
   renderDifficultyFocus(difficultyFocus, difficultySelect.value);
   renderAssetShowcase(showcaseRoots.flags, manifest.assets?.["country-flags"]);
-  renderAssetShowcase(showcaseRoots.ranks, manifest.assets?.["rank-characters"]);
+  renderAssetShowcase(showcaseRoots.ranks, [
+    ...(manifest.assets?.["piece-designs-flag"] || []),
+    ...(manifest.assets?.["piece-designs-regular"] || []),
+    ...(manifest.assets?.["piece-designs-skirmish"] || []),
+    ...(manifest.assets?.["piece-designs-sparring"] || [])
+  ]);
   renderCombinedShowcase(showcaseRoots.pieces, [
     ...(manifest.assets?.["piece-designs"] || []),
+    ...(manifest.assets?.["piece-designs-flag"] || []),
+    ...(manifest.assets?.["piece-designs-regular"] || []),
+    ...(manifest.assets?.["piece-designs-skirmish"] || []),
+    ...(manifest.assets?.["piece-designs-sparring"] || []),
     ...(manifest.assets?.["piece-colors"] || [])
   ]);
   renderAssetShowcase(showcaseRoots.boards, manifest.assets?.["board-skins"]);
@@ -532,15 +556,16 @@ function renderCarouselCard(asset, prefix) {
 
 function collectSetupState(form, difficultySelect, carousels) {
   const formData = new FormData(form);
+  const carouselKeys = [
+    "flag", "fiveStarGeneral", "fourStarGeneral", "threeStarGeneral", "twoStarGeneral",
+    "oneStarGeneral", "colonel", "lieutenantColonel", "major", "captain",
+    "firstLieutenant", "secondLieutenant", "sergeant", "spy", "private",
+    "pieceDesign", "pieceColor", "board"
+  ];
   return {
     faction: String(formData.get("faction") || ""),
     difficulty: difficultySelect.value,
-    flag: carousels.flag.getSelectedValue(),
-    rankCharacters: carousels.rankCharacters.getSelectedValue(),
-    pieceDesign: carousels.pieceDesign.getSelectedValue(),
-    pieceColor: carousels.pieceColor.getSelectedValue(),
-    board: carousels.board.getSelectedValue(),
-    portrait: carousels.portrait.getSelectedValue(),
+    ...Object.fromEntries(carouselKeys.map((key) => [key, carousels[key]?.getSelectedValue() || ""])),
     modifiers: getModifierLabels(formData)
   };
 }
@@ -594,12 +619,32 @@ function renderSetupSummary(summary, form, difficultySelect, carousels, savedSet
   if (!summary || !form) return;
   const setup = savedSetup || collectSetupState(form, difficultySelect, carousels);
 
+  const rankNames = {
+    fiveStarGeneral: "Five-Star General",
+    fourStarGeneral: "Four-Star General",
+    threeStarGeneral: "Three-Star General",
+    twoStarGeneral: "Two-Star General",
+    oneStarGeneral: "One-Star General",
+    colonel: "Colonel",
+    lieutenantColonel: "Lieutenant Colonel",
+    major: "Major",
+    captain: "Captain",
+    firstLieutenant: "First Lieutenant",
+    secondLieutenant: "Second Lieutenant",
+    sergeant: "Sergeant",
+    spy: "Spy",
+    private: "Private"
+  };
+
+  const rankDetails = Object.entries(rankNames)
+    .map(([key, label]) => `${label}: <strong>${carousels[key]?.getSelectedLabel() || "none"}</strong>`)
+    .join(". ");
+
   summary.innerHTML = `
     <strong>${setup.faction || "archival"} doctrine engaged.</strong>
     <p>Difficulty: <strong>${difficultySelect.value}</strong>. Board: <strong>${carousels.board.getSelectedLabel()}</strong>. Flag: <strong>${carousels.flag.getSelectedLabel()}</strong>.</p>
-    <p>Rank characters: <strong>${carousels.rankCharacters.getSelectedLabel()}</strong>. Piece design: <strong>${carousels.pieceDesign.getSelectedLabel()}</strong>. Piece color: <strong>${carousels.pieceColor.getSelectedLabel()}</strong>.</p>
-    <p>Commander portrait: <strong>${carousels.portrait.getSelectedLabel()}</strong>. Modifiers: ${setup.modifiers.length ? setup.modifiers.join(", ") : "none"}.</p>
-    <p class="muted">Selections are saved locally in the browser so the battle page can reflect the chosen images and the carousels remain dynamic whenever you add or replace assets in the folders.</p>
+    <p>${rankDetails}.</p>
+    <p>Piece design: <strong>${carousels.pieceDesign.getSelectedLabel()}</strong>. Piece color: <strong>${carousels.pieceColor.getSelectedLabel()}</strong>. Modifiers: ${setup.modifiers.length ? setup.modifiers.join(", ") : "none"}.</p>
   `;
 }
 
@@ -627,7 +672,6 @@ function initBattlePage(manifest) {
 
   const chosenBoard = resolveSelectedAsset(manifest, "board-skins", savedSetup.board);
   const chosenFlag = resolveSelectedAsset(manifest, "country-flags", savedSetup.flag);
-  const chosenRank = resolveSelectedAsset(manifest, "rank-characters", savedSetup.rankCharacters);
   const chosenPieceDesign = resolveSelectedAsset(manifest, "piece-designs", savedSetup.pieceDesign);
   const chosenPieceColor = savedSetup.pieceColor?.startsWith("#")
     ? { category: "piece-colors", url: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="${savedSetup.pieceColor}"/></svg>`)}`, fileName: savedSetup.pieceColor, label: `Custom tone ${savedSetup.pieceColor}` }
@@ -640,7 +684,7 @@ function initBattlePage(manifest) {
 
   renderBattleGrid(gridRoot, {
     flag: chosenFlag,
-    rankCharacters: chosenRank,
+    rankCharacters: null,
     pieceDesign: chosenPieceDesign,
     pieceColor: savedSetup.pieceColor || (chosenPieceColor ? chosenPieceColor.fileName : null)
   });
@@ -650,7 +694,6 @@ function initBattlePage(manifest) {
 
   renderCombinedShowcase(battleFxShowcase, [
     chosenFlag,
-    chosenRank,
     chosenPieceDesign,
     chosenPieceColor,
     chosenBattleFx
@@ -804,9 +847,7 @@ function renderBattleGrid(root, selectedAssets) {
             ? `<div class="piece-art piece-art--color piece-art--color--custom" style="background-color:${selectedAssets.pieceColor};"></div>`
             : `<div class="piece-art piece-art--color" style="background-image:url('${selectedAssets.pieceColor.url}')"></div>`
           : "";
-        const rankLayer = selectedAssets.rankCharacters
-          ? `<div class="piece-art piece-art--rank" style="background-image:url('${selectedAssets.rankCharacters.url}')"></div>`
-          : "";
+        const rankLayer = "";
         const flagBadge = selectedAssets.flag
           ? `<div class="piece-badge"><img src="${selectedAssets.flag.url}" alt="${selectedAssets.flag.label || selectedAssets.flag.fileName}"></div>`
           : "";

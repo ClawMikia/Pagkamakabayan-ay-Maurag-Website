@@ -132,7 +132,7 @@
             <h3>Because static hosting cannot enumerate folders.</h3>
           </div>
           <ol class="timeline-list">
-            <li>Drop new PNG, JPG, WEBP, GIF, or SVG files into <code>./custom/country-flags</code>, <code>./custom/rank-characters</code>, <code>./custom/piece-designs</code>, <code>./custom/piece-colors</code>, <code>./custom/board-skins</code>, or the other customization folders.</li>
+            <li>Drop new PNG, JPG, WEBP, GIF, or SVG files into <code>./custom/country-flags</code>, <code>./custom/piece-designs</code> (or its subfolders: <code>flag</code>, <code>regular</code>, <code>skirmish</code>, <code>frames</code>), <code>./custom/piece-colors</code>, <code>./custom/board-skins</code>, or the other customization folders.</li>
             <li>Run <code>powershell -ExecutionPolicy Bypass -File .\refresh-assets.ps1</code>.</li>
             <li>The script rewrites <code>./assets/data/assets-manifest.json</code> with relative URLs and metadata.</li>
             <li>The site fetches that manifest at load time and updates previews, setup selectors, saved battle cosmetics, and board presentation.</li>
