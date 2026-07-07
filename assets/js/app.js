@@ -328,17 +328,40 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
     });
   };
 
-  prevButton?.addEventListener("click", () => {
-    currentIndex = (currentIndex - 1 + assets.length) % assets.length;
-    render();
-    onChange?.();
-  });
+  let isAnimating = false;
 
-  nextButton?.addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % assets.length;
-    render();
-    onChange?.();
-  });
+  const animateCarousel = (direction) => {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const exitClass = direction === "next" ? "visual-carousel__frame--exiting-left" : "visual-carousel__frame--exiting-right";
+    const enterClass = direction === "next" ? "visual-carousel__frame--entering-right" : "visual-carousel__frame--entering-left";
+
+    mainCard.classList.add(exitClass);
+
+    setTimeout(() => {
+      mainCard.classList.remove(exitClass);
+
+      currentIndex = direction === "next"
+        ? (currentIndex + 1) % assets.length
+        : (currentIndex - 1 + assets.length) % assets.length;
+
+      render();
+      onChange?.();
+
+      requestAnimationFrame(() => {
+        mainCard.classList.add(enterClass);
+        setTimeout(() => {
+          mainCard.classList.remove(enterClass);
+          isAnimating = false;
+        }, 340);
+      });
+    }, 280);
+  };
+
+  prevButton?.addEventListener("click", () => animateCarousel("prev"));
+
+  nextButton?.addEventListener("click", () => animateCarousel("next"));
 
   render();
 
@@ -496,27 +519,43 @@ function createColorPicker({ root, hiddenInput, assets, savedValue, emptyLabel, 
     if (hexValue) hexValue.textContent = "folder tint";
   };
 
-  prevButton?.addEventListener("click", () => {
-    if (selectedColor) {
-      clearCustomColor();
-    }
-    if (swatches.length) {
-      currentFileIndex = (currentFileIndex - 1 + swatches.length) % swatches.length;
-    }
-    render();
-    onChange?.();
-  });
+  let isAnimating = false;
 
-  nextButton?.addEventListener("click", () => {
-    if (selectedColor) {
+  const animateColorCarousel = (direction) => {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const exitClass = direction === "next" ? "visual-carousel__frame--exiting-left" : "visual-carousel__frame--exiting-right";
+    const enterClass = direction === "next" ? "visual-carousel__frame--entering-right" : "visual-carousel__frame--entering-left";
+
+    mainCard.classList.add(exitClass);
+
+    setTimeout(() => {
+      mainCard.classList.remove(exitClass);
+
       clearCustomColor();
-    }
-    if (swatches.length) {
-      currentFileIndex = (currentFileIndex + 1) % swatches.length;
-    }
-    render();
-    onChange?.();
-  });
+      if (swatches.length) {
+        currentFileIndex = direction === "next"
+          ? (currentFileIndex + 1) % swatches.length
+          : (currentFileIndex - 1 + swatches.length) % swatches.length;
+      }
+
+      render();
+      onChange?.();
+
+      requestAnimationFrame(() => {
+        mainCard.classList.add(enterClass);
+        setTimeout(() => {
+          mainCard.classList.remove(enterClass);
+          isAnimating = false;
+        }, 340);
+      });
+    }, 280);
+  };
+
+  prevButton?.addEventListener("click", () => animateColorCarousel("prev"));
+
+  nextButton?.addEventListener("click", () => animateColorCarousel("next"));
 
   colorInput?.addEventListener("input", () => {
     selectedColor = colorInput.value;

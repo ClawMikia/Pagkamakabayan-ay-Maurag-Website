@@ -127,8 +127,10 @@ code {
 
 .brand-block h1 {
   margin: 0 0 14px;
-  font-size: clamp(1.8rem, 2.8vw, 2.4rem);
-  line-height: 1.1;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  line-height: 1.15;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .brand-copy,
@@ -614,6 +616,43 @@ code {
 
 .visual-carousel__frame {
   min-height: 220px;
+  overflow: hidden;
+}
+
+.visual-carousel__frame--exiting-left .visual-carousel__card {
+  animation: carouselSlideOutLeft 0.28s cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
+}
+
+.visual-carousel__frame--exiting-right .visual-carousel__card {
+  animation: carouselSlideOutRight 0.28s cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
+}
+
+.visual-carousel__frame--entering-right .visual-carousel__card {
+  animation: carouselSlideInRight 0.32s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+.visual-carousel__frame--entering-left .visual-carousel__card {
+  animation: carouselSlideInLeft 0.32s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@keyframes carouselSlideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-50px); opacity: 0; }
+}
+
+@keyframes carouselSlideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(50px); opacity: 0; }
+}
+
+@keyframes carouselSlideInRight {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes carouselSlideInLeft {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .visual-carousel__card {
