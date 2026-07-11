@@ -163,6 +163,7 @@ function initSetupPage(manifest) {
   const difficultySelect = document.querySelector("[data-difficulty-select]");
   const factionSelect = form.querySelector('[name="faction"]');
   const briefingButton = document.querySelector("[data-generate-briefing]");
+  const randomDeployButton = document.querySelector("[data-random-deploy]");
   const summary = document.querySelector("[data-setup-summary]");
   const difficultyFocus = document.querySelector("[data-difficulty-focus]");
   const showcaseRoots = {
@@ -228,6 +229,7 @@ function initSetupPage(manifest) {
   renderAssetShowcase(showcaseRoots.boards, manifest.assets?.["board-skins"]);
   renderAssetShowcase(showcaseRoots.portraits, manifest.assets?.portraits);
   renderSetupSummary(summary, form, difficultySelect, carousels);
+  syncSetup();
 
   difficultySelect.addEventListener("change", () => {
     renderDifficultyFocus(difficultyFocus, difficultySelect.value);
@@ -243,7 +245,15 @@ function initSetupPage(manifest) {
   briefingButton?.addEventListener("click", () => {
     const setup = collectSetupState(form, difficultySelect, carousels);
     saveSetup(setup);
-    renderSetupSummary(summary, form, difficultySelect, carousels, setup);
+    localStorage.removeItem("pagkamakabayanPlayerPlacement");
+    window.location.href = "deploy.html";
+  });
+
+  randomDeployButton?.addEventListener("click", () => {
+    const setup = collectSetupState(form, difficultySelect, carousels);
+    saveSetup(setup);
+    localStorage.removeItem("pagkamakabayanPlayerPlacement");
+    window.location.href = "battle.html";
   });
 }
 

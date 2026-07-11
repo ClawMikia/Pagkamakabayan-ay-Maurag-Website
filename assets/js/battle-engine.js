@@ -127,7 +127,7 @@ window.PagkamakabayanBattle = (function () {
     return "both";
   }
 
-  function createGame(cfg) {
+  function createGame(cfg, playerPlacement) {
     var board = [];
     for (var y = 0; y < BOARD_SIZE; y++) {
       board.push(new Array(BOARD_SIZE).fill(null));
@@ -148,33 +148,72 @@ window.PagkamakabayanBattle = (function () {
       };
     }
 
+    function placeFromLayout(side, layout) {
+      var flagPlaced = false;
+      var count = 0;
+      for (var ly = 0; ly < BOARD_SIZE; ly++) {
+        for (var lx = 0; lx < BOARD_SIZE; lx++) {
+          var key = layout && layout[ly] && layout[ly][lx];
+          if (!key || !RANKS[key]) continue;
+          if (colored[lx + "," + ly]) continue;
+          if (side === "player" && ly < 6) continue;
+          if (side === "cpu" && ly > 2) continue;
+          board[ly][lx] = makePiece(side, key);
+          count++;
+          if (key === "flag") flagPlaced = true;
+        }
+      }
+      return flagPlaced && count > 0;
+    }
+
     function place(side) {
       var homeRows = side === "player" ? [6, 7, 8] : [0, 1, 2];
       var backRow = side === "player" ? 8 : 0;
-      var cells = [];
+      var frontRow = side === "player" ? 6 : 2;
+
+      var cellsByRow = {};
       homeRows.forEach(function (row) {
+        cellsByRow[row] = [];
         for (var col = 0; col < BOARD_SIZE; col++) {
-          if (!colored[col + "," + row]) cells.push({ x: col, y: row });
+          if (!colored[col + "," + row]) cellsByRow[row].push({ x: col, y: row });
         }
       });
-      shuffle(cells);
 
-      var list = [];
-      Object.keys(RANKS).forEach(function (key) {
-        for (var n = 0; n < RANKS[key].count; n++) list.push(key);
-      });
-
-      var flagIndex = cells.findIndex(function (cell) { return cell.y === backRow; });
-      var flagCell = cells.splice(flagIndex, 1)[0];
+      // Flag must occupy the back row.
+      shuffle(cellsByRow[backRow]);
+      var flagCell = cellsByRow[backRow].pop();
       board[flagCell.y][flagCell.x] = makePiece(side, "flag");
 
-      list.filter(function (key) { return key !== "flag"; }).forEach(function (key, idx) {
-        var cell = cells[idx];
+      // Spies must occupy the front row.
+      shuffle(cellsByRow[frontRow]);
+      for (var s = 0; s < RANKS.spy.count; s++) {
+        var spyCell = cellsByRow[frontRow].pop();
+        board[spyCell.y][spyCell.x] = makePiece(side, "spy");
+      }
+
+      // Remaining pieces fill any open home cell.
+      var remaining = [];
+      homeRows.forEach(function (row) {
+        cellsByRow[row].forEach(function (cell) { remaining.push(cell); });
+      });
+      shuffle(remaining);
+
+      var others = [];
+      Object.keys(RANKS).forEach(function (key) {
+        if (key === "flag" || key === "spy") return;
+        for (var n = 0; n < RANKS[key].count; n++) others.push(key);
+      });
+      others.forEach(function (key) {
+        var cell = remaining.pop();
         board[cell.y][cell.x] = makePiece(side, key);
       });
     }
 
-    place("player");
+    if (playerPlacement && placeFromLayout("player", playerPlacement)) {
+      // player used the manual deployment from the staging page
+    } else {
+      place("player");
+    }
     place("cpu");
 
     return {
@@ -261,6 +300,21 @@ window.PagkamakabayanBattle = (function () {
     var cfg = readConfig(manifest);
     var state = null;
     var busy = false;
+
+    function readPlayerPlacement() {
+      try {
+        var raw = localStorage.getItem("pagkamakabayanPlayerPlacement");
+        if (!raw) return null;
+        var arr = JSON.parse(raw);
+        if (!Array.isArray(arr) || arr.length !== BOARD_SIZE) return null;
+        for (var i = 0; i < arr.length; i++) {
+          if (!Array.isArray(arr[i]) || arr[i].length !== BOARD_SIZE) return null;
+        }
+        return arr;
+      } catch (error) {
+        return null;
+      }
+    }
 
     function log(message, kind) {
       state.log.unshift({ message: message, kind: kind || "info" });
@@ -599,7 +653,10 @@ window.PagkamakabayanBattle = (function () {
       }
       if (banner) banner.hidden = true;
 
-      state = createGame(cfg);
+      var playerPlacement = readPlayerPlacement();
+      localStorage.removeItem("pagkamakabayanPlayerPlacement");
+
+      state = createGame(cfg, playerPlacement);
 
       if (window.BoardTiles && cfg.boardUrl) {
         window.BoardTiles.detect(cfg.boardUrl).then(function (layout) {

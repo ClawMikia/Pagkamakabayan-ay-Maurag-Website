@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deploy Board | Pagkamakabayan ay Maurag</title>
+  <meta name="description" content="Manually place your command on the chosen board before the battle begins.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+  <link rel="icon" href="./app_icon.png" type="image/png">
+</head>
+<body data-page="deploy">
+  <div class="site-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <img src="./app_icon.png" alt="App Icon" class="brand-icon">
+        <p class="eyebrow">Pre-Battle Staging</p>
+        <h1>Deploy Board</h1>
+        <p class="brand-copy">Seat every piece on your side of the selected board. The grid snaps onto the board skin automatically, and each piece centers itself inside its tile.</p>
+      </div>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
+
+      <nav id="site-nav" class="site-nav">
+        <a href="./index.html" data-nav-link>Command Deck</a>
+        <a href="./setup.html" data-nav-link>Setup Page</a>
+        <a href="./customization.html" data-nav-link>Asset Customization</a>
+        <a href="./battle.html" data-nav-link>Battle UI</a>
+        <a href="./rules-lore.html" data-nav-link>Rules & Lore</a>
+      </nav>
+
+      <section class="sidebar-panel">
+        <p class="panel-label">Staging Advice</p>
+        <p class="muted">Tap a piece from the tray, then tap an empty tile in your zone (bottom three rows). Tap a placed piece to lift it back to the tray, or drop another piece on it to swap.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Manual Deployment</p>
+          <h2>Stage your command.</h2>
+          <p class="lead">Use the board skin and piece art you chose on the Setup page. When every piece is seated, launch straight into battle.</p>
+        </div>
+
+        <div class="deploy-layout">
+          <article class="panel panel--inset deploy-palette-card">
+            <div class="section-heading">
+              <p class="eyebrow">Piece Tray</p>
+              <h3>Available forces</h3>
+            </div>
+            <div class="deploy-palette" data-deploy-palette></div>
+            <div class="deploy-palette__hint" data-deploy-hint></div>
+          </article>
+
+          <article class="battle-board panel panel--inset deploy-board">
+            <div class="battle-board__skin" data-board-skin-swatch></div>
+            <div class="battle-grid" data-deploy-grid></div>
+            <div class="deploy-counter" data-deploy-counter></div>
+          </article>
+
+          <article class="panel panel--inset deploy-sidebar-card">
+            <div class="section-heading">
+              <p class="eyebrow">Battle Orders</p>
+              <h3>Readiness</h3>
+            </div>
+            <div class="status-stack" data-deploy-status></div>
+            <div class="deploy-actions">
+              <button class="button button--primary" type="button" data-start-battle>Start battle</button>
+              <button class="button button--ghost" type="button" data-clear-board>Reset board</button>
+              <a class="button button--ghost" href="./setup.html">Back to setup</a>
+              <button class="button button--ghost" type="button" data-auto-fill>Auto-fill remaining</button>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/data/assets-manifest.js"></script>
+  <script src="./assets/js/asset-loader.js"></script>
+  <script src="./assets/js/app.js"></script>
+  <script src="./assets/js/board-tiles.js"></script>
+  <script src="./assets/js/deploy.js"></script>
+</body>
+</html>
