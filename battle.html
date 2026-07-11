@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Battle UI | Pagkamakabayan ay Maurag</title>
-  <meta name="description" content="Battle interface mockup for a dark-mode Game of the Generals site.">
+  <meta name="description" content="Playable Game of the Generals battle interface with setup-driven assets, fog of war, and win/lose resolution.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,10 +18,10 @@
         <img src="./app_icon.png" alt="App Icon" class="brand-icon">
         <p class="eyebrow">Engagement Simulator</p>
         <h1>Battle UI</h1>
-        <p class="brand-copy">A static but richly themed combat screen showing how Game of the Generals can feel like a comic-book campaign panel.</p>
+        <p class="brand-copy">A playable comic-book campaign panel. Every piece wears the character art you chose on the Setup page, and the board skin is read automatically to seat each piece on its tile.</p>
       </div>
 
-      <button class="nav-toggle" type="button" data-nav- toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
 
       <nav id="site-nav" class="site-nav">
         <a href="./index.html" data-nav-link>Command Deck</a>
@@ -33,7 +33,7 @@
 
       <section class="sidebar-panel">
         <p class="panel-label">Battle Feed Legend</p>
-        <p class="muted">Red blocks are pressure zones, amber labels are hidden-rank warnings, and blue captions reinforce controlled reconnaissance.</p>
+        <p class="muted">Your pieces always show their rank. Enemy pieces stay hidden as <code>?</code> until a challenge reveals them. Win by capturing the enemy flag or marching yours to the far baseline.</p>
       </section>
     </aside>
 
@@ -41,8 +41,8 @@
       <section class="panel">
         <div class="battle-header">
           <div>
-            <p class="eyebrow">Turn 09 · Midfield Tension</p>
-            <h2>Board state: initiative tilts toward the daring scout line.</h2>
+            <p class="eyebrow" data-battle-eyebrow>Turn 01 · Incoming</p>
+            <h2 data-battle-title>Deploy your command. Protect the flag.</h2>
           </div>
           <div class="battle-toolbar">
             <label>
@@ -63,6 +63,8 @@
                 <button class="button button--ghost" type="button" data-stopwatch-reset>Reset</button>
               </div>
             </div>
+            <button class="button button--primary" type="button" data-new-battle>New Battle</button>
+            <button class="button button--ghost" type="button" data-resign>Resign</button>
             <button class="button button--ghost" type="button" data-randomize-feed>Refresh feed</button>
           </div>
         </div>
@@ -71,38 +73,55 @@
           <article class="panel panel--inset battle-sidebar-card">
             <div class="section-heading">
               <p class="eyebrow">Commander Notes</p>
-              <h3>Difficulty traits</h3>
+              <h3>Field status</h3>
             </div>
             <div class="difficulty-focus" data-battle-difficulty-focus></div>
+            <div class="status-stack" data-battle-status></div>
 
-            <div class="status-stack">
-              <div class="status-pill">Flag secure</div>
-              <div class="status-pill">Spy uncertain</div>
-              <div class="status-pill">Aerial lane contested</div>
+            <div class="battle-legend">
+              <p class="panel-label">Rank ladder</p>
+              <ul class="battle-legend__list" data-battle-legend></ul>
             </div>
           </article>
 
           <article class="battle-board panel panel--inset">
             <div class="battle-board__skin" data-board-skin-swatch></div>
             <div class="battle-grid" data-battle-grid></div>
+            <div class="battle-banner" data-battle-banner hidden></div>
           </article>
 
           <article class="panel panel--inset battle-sidebar-card">
             <div class="section-heading">
               <p class="eyebrow">Field Broadcast</p>
-              <h3>Comic-style encounter log</h3>
+              <h3>Encounter log</h3>
             </div>
             <div class="feed-list" data-feed-list></div>
+            <div class="battle-log" data-battle-log></div>
           </article>
         </div>
       </section>
-
-
     </main>
+  </div>
+
+  <div class="result-modal" data-result-modal hidden>
+    <div class="result-modal__backdrop" data-result-close></div>
+    <div class="result-modal__dialog" data-result-card>
+      <div class="result-modal__emblem" data-result-emblem></div>
+      <p class="eyebrow" data-result-eyebrow></p>
+      <h2 data-result-title></h2>
+      <div data-result-body></div>
+      <div class="result-modal__actions">
+        <button class="button button--primary" type="button" data-result-again>New Battle</button>
+        <a class="button button--ghost" href="./setup.html">Adjust Setup</a>
+        <button class="button button--ghost" type="button" data-result-close>Close</button>
+      </div>
+    </div>
   </div>
 
   <script src="./assets/data/assets-manifest.js"></script>
   <script src="./assets/js/asset-loader.js"></script>
   <script src="./assets/js/app.js"></script>
+  <script src="./assets/js/board-tiles.js"></script>
+  <script src="./assets/js/battle-engine.js"></script>
 </body>
 </html>

@@ -743,8 +743,7 @@ function initBattlePage(manifest) {
   const select = document.querySelector("[data-battle-difficulty]");
   const feedRoot = document.querySelector("[data-feed-list]");
   const feedButton = document.querySelector("[data-randomize-feed]");
-  const skinSwatch = document.querySelector("[data-board-skin-swatch]");
-  const battleFxShowcase = document.querySelector("[data-battlefx-showcase]");
+  const legendRoot = document.querySelector("[data-battle-legend]");
   const savedSetup = readSavedSetup();
 
   if (savedSetup.difficulty && difficultyProfiles[savedSetup.difficulty]) {
@@ -757,36 +756,30 @@ function initBattlePage(manifest) {
     saveSetup({ difficulty: select.value });
   });
 
-  const chosenBoard = resolveSelectedAsset(manifest, "board-skins", savedSetup.board);
-  const chosenFlag = resolveSelectedAsset(manifest, "country-flags", savedSetup.flag);
-  const chosenPieceDesign = resolveSelectedAsset(manifest, "piece-designs", savedSetup.pieceDesign);
-  const chosenPieceColor = savedSetup.pieceColor?.startsWith("#")
-    ? { category: "piece-colors", url: `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="${savedSetup.pieceColor}"/></svg>`)}`, fileName: savedSetup.pieceColor, label: `Custom tone ${savedSetup.pieceColor}` }
-    : resolveSelectedAsset(manifest, "piece-colors", savedSetup.pieceColor);
-  const chosenBattleFx = resolveSelectedAsset(manifest, "battlefx");
-
-  if (chosenBoard && skinSwatch) {
-    skinSwatch.style.backgroundImage = `url('${chosenBoard.url}')`;
-  }
-
-  renderBattleGrid(gridRoot, {
-    flag: chosenFlag,
-    rankCharacters: null,
-    pieceDesign: chosenPieceDesign,
-    pieceColor: savedSetup.pieceColor || (chosenPieceColor ? chosenPieceColor.fileName : null)
-  });
-
+  renderRankLegend(legendRoot);
   renderFeed(feedRoot);
   feedButton?.addEventListener("click", () => renderFeed(feedRoot, true));
 
-  renderCombinedShowcase(battleFxShowcase, [
-    chosenFlag,
-    chosenPieceDesign,
-    chosenPieceColor,
-    chosenBattleFx
-  ].filter(Boolean));
-
   initStopwatch();
+
+  if (window.PagkamakabayanBattle) {
+    window.PagkamakabayanBattle.mount(manifest);
+  }
+}
+
+function renderRankLegend(root) {
+  if (!root) return;
+  const order = [
+    "fiveStarGeneral", "fourStarGeneral", "threeStarGeneral", "twoStarGeneral", "oneStarGeneral",
+    "colonel", "lieutenantColonel", "major", "captain", "firstLieutenant", "secondLieutenant",
+    "sergeant", "private", "spy", "flag"
+  ];
+  root.innerHTML = order
+    .map((key) => {
+      const def = window.PagkamakabayanBattle.RANKS[key];
+      return `<li><span class="battle-legend__rank">${def.abbrev}</span> ${def.label} <em>×${def.count}</em></li>`;
+    })
+    .join("");
 }
 
 function initStopwatch() {
