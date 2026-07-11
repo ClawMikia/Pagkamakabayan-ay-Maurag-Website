@@ -102,6 +102,7 @@ window.PagkamakabayanBattle = (function () {
 
     return {
       flagUrl: flagAsset ? flagAsset.url : "",
+      flagLabel: flagAsset ? flagAsset.label : "",
       designUrl: designAsset ? designAsset.url : "",
       colorStyle: colorStyle,
       colorIsHex: !!(pieceColor && pieceColor.indexOf("#") === 0),
@@ -132,8 +133,6 @@ window.PagkamakabayanBattle = (function () {
     for (var y = 0; y < BOARD_SIZE; y++) {
       board.push(new Array(BOARD_SIZE).fill(null));
     }
-    var colored = {};
-    for (var i = 0; i < BOARD_SIZE; i++) colored[i + "," + i] = true;
 
     var idc = 0;
     function makePiece(side, rankKey) {
@@ -154,10 +153,9 @@ window.PagkamakabayanBattle = (function () {
       for (var ly = 0; ly < BOARD_SIZE; ly++) {
         for (var lx = 0; lx < BOARD_SIZE; lx++) {
           var key = layout && layout[ly] && layout[ly][lx];
-          if (!key || !RANKS[key]) continue;
-          if (colored[lx + "," + ly]) continue;
-          if (side === "player" && ly < 6) continue;
-          if (side === "cpu" && ly > 2) continue;
+      if (!key || !RANKS[key]) continue;
+      if (side === "player" && ly < 6) continue;
+      if (side === "cpu" && ly > 2) continue;
           board[ly][lx] = makePiece(side, key);
           count++;
           if (key === "flag") flagPlaced = true;
@@ -175,7 +173,7 @@ window.PagkamakabayanBattle = (function () {
       homeRows.forEach(function (row) {
         cellsByRow[row] = [];
         for (var col = 0; col < BOARD_SIZE; col++) {
-          if (!colored[col + "," + row]) cellsByRow[row].push({ x: col, y: row });
+          cellsByRow[row].push({ x: col, y: row });
         }
       });
 
@@ -218,7 +216,6 @@ window.PagkamakabayanBattle = (function () {
 
     return {
       board: board,
-      colored: colored,
       turn: "player",
       selected: null,
       finished: false,
@@ -227,16 +224,13 @@ window.PagkamakabayanBattle = (function () {
       difficulty: cfg.difficulty,
       moveCount: 0,
       log: [],
+      eliminated: [],
       cfg: cfg
     };
   }
 
   function inBounds(x, y) {
     return x >= 0 && y >= 0 && x < BOARD_SIZE && y < BOARD_SIZE;
-  }
-
-  function isColored(state, x, y) {
-    return !!state.colored[x + "," + y];
   }
 
   function legalMoves(state, x, y) {
@@ -246,7 +240,7 @@ window.PagkamakabayanBattle = (function () {
     DIRS.forEach(function (dir) {
       var nx = x + dir.dx;
       var ny = y + dir.dy;
-      if (!inBounds(nx, ny) || isColored(state, nx, ny)) return;
+      if (!inBounds(nx, ny)) return;
       var target = state.board[ny][nx];
       if (!target) {
         moves.push({ x: nx, y: ny, capture: false });
@@ -292,14 +286,70 @@ window.PagkamakabayanBattle = (function () {
     var logRoot = document.querySelector("[data-battle-log]");
     var eyebrow = document.querySelector("[data-battle-eyebrow]");
     var title = document.querySelector("[data-battle-title]");
-    var newBtn = document.querySelector("[data-new-battle]");
-    var resignBtn = document.querySelector("[data-resign]");
+    var diffText = document.querySelector("[data-battle-difficulty-text]");
+    var newBtn = document.querySelector("[data-battle-new-battle-btn]");
+    var resignBtn = document.querySelector("[data-battle-resign-btn]");
+    var statusModal = document.querySelector("[data-battle-status-modal]");
+    var encounterModal = document.querySelector("[data-battle-encounter-modal]");
+    var statusDialog = document.querySelector("[data-battle-status-dialog]");
+    var encounterDialog = document.querySelector("[data-battle-encounter-dialog]");
     var banner = document.querySelector("[data-battle-banner]");
-    var modal = document.querySelector("[data-result-modal]");
+    var resultModal = document.querySelector("[data-result-modal]");
+    var eliminationModal = document.querySelector("[data-battle-elimination-modal]");
+    var eliminationDialog = document.querySelector("[data-battle-elimination-dialog]");
+    var eliminationRoot = document.querySelector("[data-elimination-log]");
+    var tooltip = document.querySelector("[data-piece-tooltip]");
+    var tooltipImg = document.querySelector("[data-tooltip-img]");
+    var tooltipRank = document.querySelector("[data-tooltip-rank]");
+    var tooltipSide = document.querySelector("[data-tooltip-side]");
+    var tooltipStrength = document.querySelector("[data-tooltip-strength]");
+    var tooltipAbbrev = document.querySelector("[data-tooltip-abbrev]");
+    var tooltipFaction = document.querySelector("[data-tooltip-faction]");
+    var tooltipStatus = document.querySelector("[data-tooltip-status]");
 
     var cfg = readConfig(manifest);
     var state = null;
     var busy = false;
+
+    function animatePieceMove(fromX, fromY, toX, toY, isCapture, callback) {
+      var fromCell = gridRoot.querySelector('[data-x="' + fromX + '"][data-y="' + fromY + '"]');
+      var toCell = gridRoot.querySelector('[data-x="' + toX + '"][data-y="' + toY + '"]');
+      if (!fromCell || !toCell) { callback(); return; }
+
+      var fromPiece = fromCell.querySelector(".piece");
+      if (!fromPiece) { callback(); return; }
+
+      var fromRect = fromPiece.getBoundingClientRect();
+      var toRect = toCell.getBoundingClientRect();
+
+      var dx = toRect.left - fromRect.left;
+      var dy = toRect.top - fromRect.top;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        dy = 0;
+      } else {
+        dx = 0;
+      }
+
+      fromPiece.style.transition = "transform 0.38s cubic-bezier(0.25, 0.1, 0.25, 1)";
+      fromPiece.style.transform = "translate(" + dx + "px, " + dy + "px)";
+      fromPiece.style.zIndex = "40";
+
+      if (isCapture) {
+        var toPiece = toCell.querySelector(".piece");
+        if (toPiece) {
+          toPiece.style.transition = "opacity 0.22s ease";
+          toPiece.style.opacity = "0.15";
+        }
+      }
+
+      setTimeout(function () {
+        fromPiece.style.transition = "";
+        fromPiece.style.transform = "";
+        fromPiece.style.zIndex = "";
+        callback();
+      }, 390);
+    }
 
     function readPlayerPlacement() {
       try {
@@ -331,6 +381,38 @@ window.PagkamakabayanBattle = (function () {
         .join("");
     }
 
+    function renderEliminationLog() {
+      if (!eliminationRoot) return;
+      var playerEliminated = state.eliminated.filter(function (e) { return e.side === "player"; });
+      var cpuEliminated = state.eliminated.filter(function (e) { return e.side === "cpu"; });
+
+      function listEntries(entries, sideClass) {
+        if (!entries.length) return '<p class="muted">No pieces eliminated yet.</p>';
+        return entries.map(function (entry) {
+          var label = entry.rankKey === "flag" && state.cfg.flagLabel
+            ? state.cfg.flagLabel + " Flag"
+            : entry.rank.label;
+          var imgUrl = entry.charUrl || (entry.rankKey === "flag" ? state.cfg.flagUrl : "");
+          return '<div class="elimination-entry elimination-entry--' + sideClass + '">' +
+            '<span class="elimination-entry__turn">Turn ' + (entry.turn + 1) + "</span>" +
+            (imgUrl ? '<div class="elimination-entry__art"><img src="' + imgUrl + '" alt="' + label + '"></div>' : '<div class="elimination-entry__art elimination-entry__art--placeholder">' + entry.rank.abbrev + '</div>') +
+            '<span class="elimination-entry__rank">' + label + "</span>" +
+            '<span class="elimination-entry__abbrev">' + entry.rank.abbrev + "</span>" +
+            "</div>";
+        }).join("");
+      }
+
+      eliminationRoot.innerHTML =
+        '<div class="elimination-section">' +
+        '<h4 class="elimination-section__title">Your Losses</h4>' +
+        '<div class="elimination-grid">' + listEntries(playerEliminated, "player") + '</div>' +
+        '</div>' +
+        '<div class="elimination-section">' +
+        '<h4 class="elimination-section__title">Enemy Losses</h4>' +
+        '<div class="elimination-grid">' + listEntries(cpuEliminated, "cpu") + '</div>' +
+        '</div>';
+    }
+
     function renderStatus() {
       if (!statusRoot) return;
       var youTurn = state.turn === "player" && !state.finished;
@@ -348,15 +430,16 @@ window.PagkamakabayanBattle = (function () {
     }
 
     function shownLabel(piece) {
-      return piece.rank.abbrev;
+      return piece.side === "cpu" ? "?" : piece.rank.abbrev;
     }
 
     function showChar(piece) {
-      return true;
+      return piece.side === "player";
     }
 
     function render() {
       if (!state) return;
+      if (tooltip) tooltip.hidden = true;
       var legalMap = {};
       if (state.selected) {
         legalMoves(state, state.selected.x, state.selected.y).forEach(function (move) {
@@ -368,10 +451,6 @@ window.PagkamakabayanBattle = (function () {
       for (var y = 0; y < BOARD_SIZE; y++) {
         for (var x = 0; x < BOARD_SIZE; x++) {
           var key = x + "," + y;
-          if (isColored(state, x, y)) {
-            cells += '<div class="cell cell--blocked" aria-label="blocked tile"><span class="cell__blocked-mark"></span></div>';
-            continue;
-          }
           var piece = state.board[y][x];
           var classes = "cell";
           if (state.selected && state.selected.x === x && state.selected.y === y) classes += " cell--selected";
@@ -434,6 +513,11 @@ window.PagkamakabayanBattle = (function () {
       var att = state.board[from.y][from.x];
       var def = state.board[to.y][to.x];
 
+      function resolveName(piece) {
+        if (piece.rankKey === "flag" && state.cfg.flagLabel) return state.cfg.flagLabel + " Flag";
+        return piece.rank.label;
+      }
+
       if (!def) {
         state.board[to.y][to.x] = att;
         state.board[from.y][from.x] = null;
@@ -442,22 +526,26 @@ window.PagkamakabayanBattle = (function () {
         att.revealed = true;
         def.revealed = true;
         var result = fight(att, def);
-        var attName = att.rank.label;
-        var defName = def.rank.label;
+        var attName = resolveName(att);
+        var defName = resolveName(def);
         if (result === "both") {
           att.alive = false;
           def.alive = false;
           state.board[from.y][from.x] = null;
           state.board[to.y][to.x] = null;
+          state.eliminated.push({ side: att.side, rank: att.rank, rankKey: att.rankKey, charUrl: att.charUrl, turn: state.moveCount });
+          state.eliminated.push({ side: def.side, rank: def.rank, rankKey: def.rankKey, charUrl: def.charUrl, turn: state.moveCount });
           log("Clash: " + attName + " and " + defName + " eliminated each other.", "combat");
         } else if (result === "defender") {
           def.alive = false;
           state.board[to.y][to.x] = att;
           state.board[from.y][from.x] = null;
+          state.eliminated.push({ side: def.side, rank: def.rank, rankKey: def.rankKey, charUrl: def.charUrl, turn: state.moveCount });
           log("Challenge: " + attName + " eliminated the enemy " + defName + ".", att.side === "player" ? "win" : "loss");
         } else {
           att.alive = false;
           state.board[from.y][from.x] = null;
+          state.eliminated.push({ side: att.side, rank: att.rank, rankKey: att.rankKey, charUrl: att.charUrl, turn: state.moveCount });
           log("Ambush: the enemy " + defName + " eliminated your " + attName + ".", att.side === "player" ? "loss" : "win");
         }
 
@@ -493,7 +581,6 @@ window.PagkamakabayanBattle = (function () {
       if (!cell) return;
       var x = Number(cell.dataset.x);
       var y = Number(cell.dataset.y);
-      if (isColored(state, x, y)) return;
 
       var piece = state.board[y][x];
 
@@ -503,8 +590,14 @@ window.PagkamakabayanBattle = (function () {
         });
         if (isLegal) {
           var from = state.selected;
+          var toPiece = state.board[y][x];
           state.selected = null;
-          applyMove(from, { x: x, y: y });
+          render();
+          busy = true;
+          animatePieceMove(from.x, from.y, x, y, !!toPiece, function () {
+            applyMove(from, { x: x, y: y });
+            busy = false;
+          });
           return;
         }
       }
@@ -524,12 +617,15 @@ window.PagkamakabayanBattle = (function () {
         return;
       }
       var move = chooseCpuMove(state);
-      busy = false;
       if (!move) {
         endGame("player", "stalemate");
         return;
       }
-      applyMove(move.from, move.to);
+      var def = state.board[move.to.y][move.to.x];
+      animatePieceMove(move.from.x, move.from.y, move.to.x, move.to.y, !!def, function () {
+        applyMove(move.from, move.to);
+        busy = false;
+      });
     }
 
     function chooseCpuMove(state) {
@@ -616,13 +712,13 @@ window.PagkamakabayanBattle = (function () {
     }
 
     function showResult(winner, reason) {
-      if (!modal) return;
+      if (!resultModal) return;
       var won = winner === "player";
-      var emblem = modal.querySelector("[data-result-emblem]");
-      var eyebrowEl = modal.querySelector("[data-result-eyebrow]");
-      var titleEl = modal.querySelector("[data-result-title]");
-      var bodyEl = modal.querySelector("[data-result-body]");
-      var card = modal.querySelector("[data-result-card]");
+      var emblem = resultModal.querySelector("[data-result-emblem]");
+      var eyebrowEl = resultModal.querySelector("[data-result-eyebrow]");
+      var titleEl = resultModal.querySelector("[data-result-title]");
+      var bodyEl = resultModal.querySelector("[data-result-body]");
+      var card = resultModal.querySelector("[data-result-card]");
 
       card.className = "result-modal__dialog " + (won ? "is-win" : "is-loss");
       if (emblem) emblem.textContent = won ? "★" : "✶";
@@ -633,67 +729,166 @@ window.PagkamakabayanBattle = (function () {
           "<p>" + reasonText(reason, won) + "</p>" +
           '<p class="muted">Faction: ' + state.cfg.faction + " · CPU temper: " + state.difficulty + " · Turns: " + state.moveCount + "</p>";
       }
-      modal.hidden = false;
+      resultModal.hidden = false;
+      resultModal.offsetHeight;
       requestAnimationFrame(function () {
-        modal.classList.add("is-open");
+        resultModal.classList.add("is-open");
       });
     }
 
     function hideResult() {
-      if (!modal) return;
-      modal.classList.remove("is-open");
-      setTimeout(function () { modal.hidden = true; }, 320);
+      if (!resultModal) return;
+      resultModal.classList.remove("is-open");
+      setTimeout(function () { resultModal.hidden = true; }, 340);
     }
 
     function newGame() {
       hideResult();
       cfg = readConfig(manifest);
-      if (cfg.boardUrl && skinSwatch) {
-        skinSwatch.style.backgroundImage = "url('" + cfg.boardUrl + "')";
+      var skinSwatch = document.querySelector("[data-board-skin-swatch]");
+      function applyBoardDetection() {
+        if (!skinSwatch || !cfg.boardUrl || !window.BoardTiles) {
+          render();
+          return;
+        }
+        window.BoardTiles.detect(cfg.boardUrl).then(function (layout) {
+          var boardWrap = gridRoot.closest(".battle-board");
+          if (boardWrap) {
+            var inset = (layout.inset * 100).toFixed(2) + "%";
+            boardWrap.style.setProperty("--board-inset", inset);
+            boardWrap.style.setProperty("--grid-top", inset);
+            boardWrap.style.setProperty("--grid-left", inset);
+            boardWrap.style.setProperty("--grid-right", inset);
+            boardWrap.style.setProperty("--grid-bottom", inset);
+          }
+          gridRoot.style.setProperty("--grid-cols", layout.cols);
+          gridRoot.style.setProperty("--grid-rows", layout.rows);
+          render();
+        }).catch(function () {
+          render();
+        });
       }
+      if (cfg.boardUrl && skinSwatch) {
+        skinSwatch.src = cfg.boardUrl;
+        if (skinSwatch.complete) {
+          applyBoardDetection();
+        } else {
+          skinSwatch.onload = applyBoardDetection;
+          skinSwatch.onerror = function () { render(); };
+        }
+      }
+
       if (banner) banner.hidden = true;
+
+      try {
+        var sw = JSON.parse(localStorage.getItem("pagkamakabayanStopwatch") || "{}");
+        var boardWrap = gridRoot.closest(".battle-board");
+        if (boardWrap) boardWrap.classList.toggle("battle-board--locked", !sw.running);
+      } catch (e) {}
 
       var playerPlacement = readPlayerPlacement();
       localStorage.removeItem("pagkamakabayanPlayerPlacement");
 
       state = createGame(cfg, playerPlacement);
 
-      if (window.BoardTiles && cfg.boardUrl) {
-        window.BoardTiles.detect(cfg.boardUrl).then(function (layout) {
-          var boardWrap = gridRoot.closest(".battle-board");
-          if (boardWrap) {
-            boardWrap.style.setProperty("--board-inset", (layout.inset * 100).toFixed(2) + "%");
-          }
-          gridRoot.style.setProperty("--grid-cols", layout.cols);
-          render();
-        });
-      } else {
-        render();
-      }
-
       log("New battle deployed. 21 pieces per side, flag hidden in the rear.", "info");
       renderStatus();
+      render();
     }
 
       gridRoot.addEventListener("click", onCellClick);
 
-      var diffSelect = document.querySelector("[data-battle-difficulty]");
-      if (diffSelect) diffSelect.addEventListener("change", function () {
-        if (state) {
-          state.difficulty = diffSelect.value;
-          renderStatus();
+      gridRoot.addEventListener("mouseover", function (e) {
+        if (!tooltip || !state || state.finished || state.turn !== "player") return;
+        var cell = e.target.closest("[data-x]");
+        if (!cell) return;
+        var x = Number(cell.dataset.x);
+        var y = Number(cell.dataset.y);
+        var piece = state.board[y][x];
+        if (piece && piece.alive && piece.side === "player" && (!state.selected || state.selected.x !== x || state.selected.y !== y)) {
+          tooltipImg.src = piece.charUrl;
+          var rankLabel = piece.rankKey === "flag" && state.cfg.flagLabel
+            ? state.cfg.flagLabel + " Flag"
+            : piece.rank.label;
+          tooltipRank.textContent = rankLabel;
+          tooltipSide.textContent = "Friendly Unit";
+          tooltipStrength.textContent = "Combat Strength: " + piece.rank.strength;
+          tooltipAbbrev.textContent = "Rank Code: " + piece.rank.abbrev;
+          tooltipFaction.textContent = "Faction: " + (state.cfg.faction || "archival");
+          tooltipStatus.textContent = piece.revealed ? "Status: Revealed" : "Status: Hidden";
+          tooltip.hidden = false;
+          var rect = cell.getBoundingClientRect();
+          tooltip.style.top = (rect.bottom + 15) + "px";
+          tooltip.style.left = rect.left + "px";
         }
       });
+
+      gridRoot.addEventListener("mouseout", function (e) {
+        if (!tooltip) return;
+        var cell = e.target.closest("[data-x]");
+        if (!cell) return;
+        tooltip.hidden = true;
+      });
+
+      document.addEventListener("stopwatch:change", function (e) {
+        var boardWrap = gridRoot ? gridRoot.closest(".battle-board") : null;
+        if (boardWrap) {
+          boardWrap.classList.toggle("battle-board--locked", !e.detail.running);
+        }
+      });
+
+      var diffText = document.querySelector("[data-battle-difficulty-text]");
+      if (diffText) diffText.textContent = cfg.difficulty || "Maurag po Ako";
 
     if (newBtn) newBtn.addEventListener("click", newGame);
     if (resignBtn) resignBtn.addEventListener("click", function () {
       if (state && !state.finished) endGame("cpu", "resign");
     });
-    if (modal) {
-      modal.querySelectorAll("[data-result-close]").forEach(function (el) {
+
+    function openSideModal(modalEl) {
+      if (!modalEl) return;
+      modalEl.hidden = false;
+      modalEl.offsetHeight;
+      requestAnimationFrame(function () {
+        modalEl.classList.add("is-open");
+      });
+    }
+    function closeSideModal(modalEl) {
+      if (!modalEl) return;
+      modalEl.classList.remove("is-open");
+      setTimeout(function () { modalEl.hidden = true; }, 360);
+    }
+
+    if (statusModal) {
+      var openStatusBtn = document.querySelector("[data-open-battle-status-modal]");
+      if (openStatusBtn) openStatusBtn.addEventListener("click", function () { openSideModal(statusModal); });
+      statusModal.querySelectorAll("[data-close-battle-status-modal]").forEach(function (el) {
+        el.addEventListener("click", function () { closeSideModal(statusModal); });
+      });
+    }
+    if (encounterModal) {
+      var openEncounterBtn = document.querySelector("[data-open-battle-encounter-modal]");
+      if (openEncounterBtn) openEncounterBtn.addEventListener("click", function () { openSideModal(encounterModal); });
+      encounterModal.querySelectorAll("[data-close-battle-encounter-modal]").forEach(function (el) {
+        el.addEventListener("click", function () { closeSideModal(encounterModal); });
+      });
+    }
+    if (eliminationModal) {
+      var openEliminationBtn = document.querySelector("[data-open-battle-elimination-modal]");
+      if (openEliminationBtn) openEliminationBtn.addEventListener("click", function () {
+        renderEliminationLog();
+        openSideModal(eliminationModal);
+      });
+      eliminationModal.querySelectorAll("[data-close-battle-elimination-modal]").forEach(function (el) {
+        el.addEventListener("click", function () { closeSideModal(eliminationModal); });
+      });
+    }
+
+    if (resultModal) {
+      resultModal.querySelectorAll("[data-result-close]").forEach(function (el) {
         el.addEventListener("click", hideResult);
       });
-      var again = modal.querySelector("[data-result-again]");
+      var again = resultModal.querySelector("[data-result-again]");
       if (again) again.addEventListener("click", newGame);
     }
 

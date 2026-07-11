@@ -7,7 +7,7 @@
   <meta name="description" content="Playable Game of the Generals battle interface with setup-driven assets and win/lose resolution.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/css/styles.css">
   <link rel="icon" href="./app_icon.png" type="image/png">
 </head>
@@ -44,59 +44,38 @@
             <p class="eyebrow" data-battle-eyebrow>Turn 01 · Incoming</p>
             <h2 data-battle-title>Deploy your command. Protect the flag.</h2>
           </div>
-          <div class="battle-toolbar">
-            <label>
-              <span>CPU Temper</span>
-              <select data-battle-difficulty>
-                <option value="Anak">Anak</option>
-                <option value="Mabalos / Salamat">Mabalos / Salamat</option>
-                <option value="Maurag po Ako" selected>Maurag po Ako</option>
-                <option value="Mahal ko ang Bayan">Mahal ko ang Bayan</option>
-              </select>
-            </label>
-            <div class="stopwatch-panel" data-stopwatch>
-              <span class="stopwatch-panel__label">Battle Stopwatch</span>
-              <strong class="stopwatch-panel__time" data-stopwatch-display>00:00</strong>
-              <div class="stopwatch-panel__actions">
-                <button class="button button--ghost" type="button" data-stopwatch-start>Start</button>
-                <button class="button button--ghost" type="button" data-stopwatch-pause>Pause</button>
-                <button class="button button--ghost" type="button" data-stopwatch-reset>Reset</button>
-              </div>
+          <div class="stopwatch-panel" data-stopwatch>
+            <span class="stopwatch-panel__label">Battle Stopwatch</span>
+            <strong class="stopwatch-panel__time" data-stopwatch-display>00:00</strong>
+            <div class="stopwatch-panel__actions">
+              <button class="button button--ghost" type="button" data-stopwatch-start>Start</button>
+              <button class="button button--ghost" type="button" data-stopwatch-pause>Pause</button>
+              <button class="button button--ghost" type="button" data-stopwatch-reset>Reset</button>
             </div>
-            <button class="button button--primary" type="button" data-new-battle>New Battle</button>
-            <button class="button button--ghost" type="button" data-resign>Resign</button>
-            <button class="button button--ghost" type="button" data-randomize-feed>Refresh feed</button>
+          </div>
+        </div>
+
+        <div class="battle-toolbar">
+          <span class="battle-toolbar__label">CPU Temper: <span class="battle-toolbar__badge" data-battle-difficulty-text>Maurag po Ako</span></span>
+          <div class="battle-toolbar__actions">
+            <div class="battle-toolbar__actions-group">
+              <button class="button button--primary" type="button" data-battle-new-battle-btn>New Battle</button>
+              <button class="button button--ghost" type="button" data-battle-resign-btn>Resign</button>
+              <button class="button button--ghost" type="button" data-battle-feed-btn">Refresh Feed</button>
+            </div>
+            <div class="battle-toolbar__actions-group battle-toolbar__actions-group--secondary">
+              <button class="button button--accent" type="button" data-open-battle-status-modal>Field Status</button>
+              <button class="button button--accent" type="button" data-open-battle-encounter-modal>Encounter Log</button>
+              <button class="button button--accent" type="button" data-open-battle-elimination-modal>Elimination Log</button>
+            </div>
           </div>
         </div>
 
         <div class="battle-layout">
-          <article class="panel panel--inset battle-sidebar-card">
-            <div class="section-heading">
-              <p class="eyebrow">Commander Notes</p>
-              <h3>Field status</h3>
-            </div>
-            <div class="difficulty-focus" data-battle-difficulty-focus></div>
-            <div class="status-stack" data-battle-status></div>
-
-            <div class="battle-legend">
-              <p class="panel-label">Rank ladder</p>
-              <ul class="battle-legend__list" data-battle-legend></ul>
-            </div>
-          </article>
-
-          <article class="battle-board panel panel--inset">
-            <div class="battle-board__skin" data-board-skin-swatch></div>
+          <article class="panel panel--inset battle-board">
+            <img class="battle-board__skin" data-board-skin-swatch alt="">
             <div class="battle-grid" data-battle-grid></div>
             <div class="battle-banner" data-battle-banner hidden></div>
-          </article>
-
-          <article class="panel panel--inset battle-sidebar-card">
-            <div class="section-heading">
-              <p class="eyebrow">Field Broadcast</p>
-              <h3>Encounter log</h3>
-            </div>
-            <div class="feed-list" data-feed-list></div>
-            <div class="battle-log" data-battle-log></div>
           </article>
         </div>
       </section>
@@ -106,7 +85,7 @@
   <div class="result-modal" data-result-modal hidden>
     <div class="result-modal__backdrop" data-result-close></div>
     <div class="result-modal__dialog" data-result-card>
-      <div class="result-modal__emblem" data-result-emblem></div>
+      <div class="result-modal__emblem" data-result-emblem></div>                                                                                                                                                                     
       <p class="eyebrow" data-result-eyebrow></p>
       <h2 data-result-title></h2>
       <div data-result-body></div>
@@ -118,10 +97,123 @@
     </div>
   </div>
 
+  <div class="side-modal" id="modal-battle-status" data-battle-status-modal hidden>
+    <div class="side-modal__backdrop" data-close-battle-status-modal></div>
+    <div class="side-modal__dialog" data-battle-status-dialog>
+      <div class="side-modal__header">
+        <p class="eyebrow">Commander Notes</p>
+        <h3>Field Status & Rank Ladder</h3>
+      </div>
+      <button class="side-modal__close" type="button" data-close-battle-status-modal aria-label="Close field status">&#x2715;</button>
+      <div class="side-modal__body">
+        <div class="difficulty-focus" data-battle-difficulty-focus></div>
+        <div class="status-stack" data-battle-status></div>
+        <div class="battle-legend">
+          <p class="panel-label">Rank ladder</p>
+          <ul class="battle-legend__list" data-battle-legend></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-modal" id="modal-battle-encounter" data-battle-encounter-modal hidden>
+    <div class="side-modal__backdrop" data-close-battle-encounter-modal></div>
+    <div class="side-modal__dialog" data-battle-encounter-dialog>
+      <div class="side-modal__header">
+        <p class="eyebrow">Field Broadcast</p>
+        <h3>Encounter Log</h3>
+      </div>
+      <button class="side-modal__close" type="button" data-close-battle-encounter-modal aria-label="Close encounter log">&#x2715;</button>
+      <div class="side-modal__body">
+        <div class="feed-list" data-feed-list></div>
+        <div class="battle-log" data-battle-log></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-modal" id="modal-battle-elimination" data-battle-elimination-modal hidden>
+    <div class="side-modal__backdrop" data-close-battle-elimination-modal></div>
+    <div class="side-modal__dialog" data-battle-elimination-dialog>
+      <div class="side-modal__header">
+        <p class="eyebrow">Field Report</p>
+        <h3>Elimination Log</h3>
+      </div>
+      <button class="side-modal__close" type="button" data-close-battle-elimination-modal aria-label="Close elimination log">&#x2715;</button>
+      <div class="side-modal__body">
+        <div class="elimination-log" data-elimination-log></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="piece-tooltip" data-piece-tooltip hidden>
+    <div class="piece-tooltip__figure">
+      <img data-tooltip-img src="" alt="">
+    </div>
+    <div class="piece-tooltip__details">
+      <strong data-tooltip-rank></strong>
+      <span class="piece-tooltip__detail piece-tooltip__detail--side" data-tooltip-side></span>
+      <span class="piece-tooltip__detail piece-tooltip__detail--strength" data-tooltip-strength></span>
+      <span class="piece-tooltip__detail piece-tooltip__detail--abbrev" data-tooltip-abbrev></span>
+      <span class="piece-tooltip__detail piece-tooltip__detail--faction" data-tooltip-faction></span>
+      <span class="piece-tooltip__detail piece-tooltip__detail--status" data-tooltip-status></span>
+    </div>
+  </div>
+
   <script src="./assets/data/assets-manifest.js"></script>
   <script src="./assets/js/asset-loader.js"></script>
   <script src="./assets/js/app.js"></script>
   <script src="./assets/js/board-tiles.js"></script>
   <script src="./assets/js/battle-engine.js"></script>
+  <script>
+    (function () {
+      function openSideModal(modalEl) {
+        if (!modalEl || modalEl.classList.contains("is-open")) return;
+        modalEl.hidden = false;
+        modalEl.offsetHeight;
+        requestAnimationFrame(function () {
+          modalEl.classList.add("is-open");
+        });
+      }
+      function closeSideModal(modalEl, delay) {
+        if (!modalEl) return;
+        modalEl.classList.remove("is-open");
+        setTimeout(function () { modalEl.hidden = true; }, delay || 360);
+      }
+      var statusBtn = document.querySelector("[data-open-battle-status-modal]");
+      var encBtn = document.querySelector("[data-open-battle-encounter-modal]");
+      var elimBtn = document.querySelector("[data-open-battle-elimination-modal]");
+      var statusModal = document.getElementById("modal-battle-status") || document.querySelector("[data-battle-status-modal]");
+      var encModal = document.getElementById("modal-battle-encounter") || document.querySelector("[data-battle-encounter-modal]");
+      var elimModal = document.getElementById("modal-battle-elimination") || document.querySelector("[data-battle-elimination-modal]");
+      if (statusBtn) {
+        statusBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          openSideModal(statusModal);
+        });
+      }
+      if (encBtn) {
+        encBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          openSideModal(encModal);
+        });
+      }
+      if (elimBtn) {
+        elimBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          openSideModal(elimModal);
+        });
+      }
+      [statusModal, encModal, elimModal].forEach(function (m) {
+        if (!m) return;
+        m.querySelectorAll("[data-close-battle-status-modal], [data-close-battle-encounter-modal], [data-close-battle-elimination-modal]").forEach(function (el) {
+          el.addEventListener("click", function () { closeSideModal(m, 360); });
+        });
+        var backdrop = m.querySelector(".side-modal__backdrop");
+        if (backdrop) {
+          backdrop.addEventListener("click", function () { closeSideModal(m, 360); });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

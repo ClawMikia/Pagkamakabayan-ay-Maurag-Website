@@ -688,23 +688,29 @@ function initBattlePage(manifest) {
   const focus = document.querySelector("[data-battle-difficulty-focus]");
   const select = document.querySelector("[data-battle-difficulty]");
   const feedRoot = document.querySelector("[data-feed-list]");
-  const feedButton = document.querySelector("[data-randomize-feed]");
+  const feedButton = document.querySelector("[data-battle-feed-btn]");
   const legendRoot = document.querySelector("[data-battle-legend]");
   const savedSetup = readSavedSetup();
 
   if (savedSetup.difficulty && difficultyProfiles[savedSetup.difficulty]) {
-    select.value = savedSetup.difficulty;
+    if (select) select.value = savedSetup.difficulty;
+    const diffText = document.querySelector("[data-battle-difficulty-text]");
+    if (diffText) diffText.textContent = savedSetup.difficulty;
   }
 
-  renderDifficultyFocus(focus, select.value);
-  select.addEventListener("change", () => {
+  renderDifficultyFocus(focus, select ? select.value : (savedSetup.difficulty || ""));
+  if (select) select.addEventListener("change", () => {
     renderDifficultyFocus(focus, select.value);
     saveSetup({ difficulty: select.value });
+    const diffText = document.querySelector("[data-battle-difficulty-text]");
+    if (diffText) diffText.textContent = select.value;
   });
 
   renderRankLegend(legendRoot);
   renderFeed(feedRoot);
-  feedButton?.addEventListener("click", () => renderFeed(feedRoot, true));
+  feedButton?.addEventListener("click", () => {
+    renderFeed(feedRoot, true);
+  });
 
   initStopwatch();
 
@@ -741,6 +747,7 @@ function initStopwatch() {
     display.textContent = formatStopwatch(getLiveElapsed(state));
     startButton.disabled = state.running;
     pauseButton.disabled = !state.running;
+    document.dispatchEvent(new CustomEvent("stopwatch:change", { detail: { running: state.running } }));
   };
 
   const tick = window.setInterval(() => {

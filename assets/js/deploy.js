@@ -86,14 +86,11 @@
     });
     if (!rankChar.flag && flagAsset) rankChar.flag = flagAsset.url;
 
-    var colored = {};
-    for (var i = 0; i < BOARD_SIZE; i++) colored[i + "," + i] = true;
-
     var homeRows = [6, 7, 8];
     var homeCells = [];
     homeRows.forEach(function (row) {
       for (var col = 0; col < BOARD_SIZE; col++) {
-        if (!colored[col + "," + row]) homeCells.push({ x: col, y: row });
+        homeCells.push({ x: col, y: row });
       }
     });
 
@@ -142,7 +139,7 @@
     }
 
     function inHome(x, y) {
-      return homeRows.indexOf(y) !== -1 && !colored[x + "," + y];
+      return homeRows.indexOf(y) !== -1;
     }
 
     var frontRow = homeRows[0];
@@ -152,7 +149,6 @@
     // - Flag must occupy the player's back row.
     // - Spy must occupy the player's front row (closest to the center).
     // - Every other piece may sit anywhere in the home zone.
-    // - No piece may occupy a blocked diagonal cell (handled by inHome).
     function requiredRow(key) {
       if (key === "flag") return backRow;
       if (key === "spy") return frontRow;
@@ -179,9 +175,15 @@
         window.BoardTiles.detect(boardAsset.url).then(function (layout) {
           var boardWrap = gridRoot.closest(".deploy-board") || gridRoot.closest(".battle-board");
           if (boardWrap) {
-            boardWrap.style.setProperty("--board-inset", (layout.inset * 100).toFixed(2) + "%");
+            var inset = (layout.inset * 100).toFixed(2) + "%";
+            boardWrap.style.setProperty("--board-inset", inset);
+            boardWrap.style.setProperty("--grid-top", inset);
+            boardWrap.style.setProperty("--grid-left", inset);
+            boardWrap.style.setProperty("--grid-right", inset);
+            boardWrap.style.setProperty("--grid-bottom", inset);
           }
           gridRoot.style.setProperty("--grid-cols", layout.cols || 9);
+          gridRoot.style.setProperty("--grid-rows", layout.rows || 9);
           renderBoard();
         });
       } else {
@@ -252,11 +254,6 @@
       var cells = "";
       for (var yy = 0; yy < BOARD_SIZE; yy++) {
         for (var xx = 0; xx < BOARD_SIZE; xx++) {
-          var key = xx + "," + yy;
-          if (colored[key]) {
-            cells += '<div class="cell cell--blocked" aria-label="blocked tile"><span class="cell__blocked-mark"></span></div>';
-            continue;
-          }
           var rankKey = board[yy][xx];
           var classes = "cell";
           if (inHome(xx, yy)) {
