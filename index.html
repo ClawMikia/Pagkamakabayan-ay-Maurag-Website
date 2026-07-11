@@ -26,6 +26,7 @@
       <nav id="site-nav" class="site-nav">
         <a href="./index.html" data-nav-link>Command Deck</a>
         <a href="./setup.html" data-nav-link>Setup Page</a>
+        <a href="./customization.html" data-nav-link>Asset Customization</a>
         <a href="./battle.html" data-nav-link>Battle UI</a>
         <a href="./rules-lore.html" data-nav-link>Rules & Lore</a>
       </nav>
@@ -117,28 +118,7 @@
         <div class="difficulty-grid" data-difficulty-grid></div>
       </section>
 
-      <section class="dual-panel">
-        <article class="panel">
-          <div class="section-heading">
-            <p class="eyebrow">Customization</p>
-            <h3>Asset folders prepared for hand-edited visual swaps.</h3>
-          </div>
-          <div class="asset-preview-list" data-asset-preview></div>
-        </article>
 
-        <article class="panel">
-          <div class="section-heading">
-            <p class="eyebrow">Refresh Workflow</p>
-            <h3>Because static hosting cannot enumerate folders.</h3>
-          </div>
-          <ol class="timeline-list">
-            <li>Drop new PNG, JPG, WEBP, GIF, or SVG files into <code>./custom/country-flags</code>, <code>./custom/pieces/&lt;rank&gt;</code> (one folder per piece type: <code>five-star-general</code>, <code>private</code>, <code>spy</code>, etc.), <code>./custom/piece-designs/frames</code>, <code>./custom/piece-colors</code>, <code>./custom/board-skins</code>, or the other customization folders. Every file name becomes its own image <code>src</code> automatically.</li>
-            <li>Run <code>powershell -ExecutionPolicy Bypass -File .\watch-assets.ps1</code> to auto-refresh whenever files change, or run <code>.\refresh-assets.ps1</code> manually.</li>
-            <li>The script rewrites <code>./assets/data/assets-manifest.json</code> with relative URLs and metadata.</li>
-            <li>The site fetches that manifest at load time and updates previews, setup selectors, saved battle cosmetics, and board presentation.</li>
-          </ol>
-        </article>
-      </section>
     </main>
   </div>
 

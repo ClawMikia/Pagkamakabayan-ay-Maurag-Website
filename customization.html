@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset Customization | Pagkamakabayan ay Maurag</title>
+  <meta name="description" content="Browse and customize country flags, piece designs, and board skins for your Game of the Generals battlefield.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css">
+  <link rel="icon" href="./app_icon.png" type="image/png">
+</head>
+<body data-page="customization">
+  <div class="site-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <img src="./app_icon.png" alt="App Icon" class="brand-icon">
+        <p class="eyebrow">Dossier & Asset Registry</p>
+        <h1>Asset Customization</h1>
+        <p class="brand-copy">Survey the full visual armory: flags, rank archetypes, piece silhouettes, and board skins. Every folder you see here is loaded from the manifest and injected at runtime.</p>
+      </div>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">Menu</button>
+
+      <nav id="site-nav" class="site-nav">
+        <a href="./index.html" data-nav-link>Command Deck</a>
+        <a href="./setup.html" data-nav-link>Setup Page</a>
+        <a href="./customization.html" data-nav-link>Asset Customization</a>
+        <a href="./battle.html" data-nav-link>Battle UI</a>
+        <a href="./rules-lore.html" data-nav-link>Rules & Lore</a>
+      </nav>
+
+      <section class="sidebar-panel">
+        <p class="panel-label">Asset Pipeline</p>
+        <p class="muted">All assets are read from <code>./assets/data/assets-manifest.json</code>. After dropping new files into any customization folder, run <code>./refresh-assets.ps1</code> to regenerate the manifest.</p>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Visual Armory Overview</p>
+          <h2>Three asset streams, one battlefield identity.</h2>
+          <p class="lead">Each category is independently replaceable. Swap a flag folder, a rank pack, a piece silhouette set, or a board skin without touching the engine.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h4>Country Flags</h4>
+            <p>Nation banners rendered on piece badges. Folders contain a <code>flag.png</code> (small badge icon) and a <code>preview.png</code> (large showcase image). Supported aspect ratios are preserved.</p>
+          </article>
+          <article class="feature-card">
+            <h4>Piece Design</h4>
+            <p>Silhouette frames and color overlays loaded from folders. A single design folder can supply multiple <code>frame_*.png</code> variants and a matching <code>preview.png</code> for the showcase carousel.</p>
+          </article>
+          <article class="feature-card">
+            <h4>Board Skins</h4>
+            <p>Manifest-loaded visual themes for the tactical grid. Each skin folder contains a <code>preview.png</code> for the showcase and the actual board texture applied to the <code>.battle-board__skin</code> element during gameplay.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Asset Registry</p>
+          <h3>Browse every pack in the armory</h3>
+          <p class="lead">Expand each category to preview individual packs. Each sub-accordion shows the actual image files loaded from the manifest.</p>
+        </div>
+        <div class="accordion-list category-accordions">
+
+          <details class="category-accordion category--flags" open>
+            <summary>Country Flags <span class="accordion-count">11 packs</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--brazil" open>
+                <summary>Brazil</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/Brazil.png" alt="Brazil"><p class="piece-gallery__label">Brazil</p></div>
+              </details>
+              <details class="piece-accordion piece--china" open>
+                <summary>China</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/China.png" alt="China"><p class="piece-gallery__label">China</p></div>
+              </details>
+              <details class="piece-accordion piece--france" open>
+                <summary>France</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/France.png" alt="France"><p class="piece-gallery__label">France</p></div>
+              </details>
+              <details class="piece-accordion piece--germany" open>
+                <summary>Germany</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/Germany.png" alt="Germany"><p class="piece-gallery__label">Germany</p></div>
+              </details>
+              <details class="piece-accordion piece--india" open>
+                <summary>India</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/India.png" alt="India"><p class="piece-gallery__label">India</p></div>
+              </details>
+              <details class="piece-accordion piece--japan" open>
+                <summary>Japan</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/Japan.png" alt="Japan"><p class="piece-gallery__label">Japan</p></div>
+              </details>
+              <details class="piece-accordion piece--korea" open>
+                <summary>Korea</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/Korea.png" alt="Korea"><p class="piece-gallery__label">Korea</p></div>
+              </details>
+              <details class="piece-accordion piece--philippines" open>
+                <summary>Philippines</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/Philippines.png" alt="Philippines"><p class="piece-gallery__label">Philippines</p></div>
+              </details>
+              <details class="piece-accordion piece--russia" open>
+                <summary>Russia</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/Russia.png" alt="Russia"><p class="piece-gallery__label">Russia</p></div>
+              </details>
+              <details class="piece-accordion piece--united-kingdom" open>
+                <summary>United Kingdom</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/United Kingdom.png" alt="United Kingdom"><p class="piece-gallery__label">United Kingdom</p></div>
+              </details>
+              <details class="piece-accordion piece--united-states" open>
+                <summary>United States</summary>
+                <div class="piece-gallery"><img src="./custom/country-flags/United States.png" alt="United States"><p class="piece-gallery__label">United States</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--pieces">
+            <summary>Piece Design <span class="accordion-count">15 packs</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--bagani" open>
+                <summary>Bagani</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/bagani.png" alt="Bagani"><p class="piece-gallery__label">bagani</p></div>
+              </details>
+              <details class="piece-accordion piece--bayani" open>
+                <summary>Bayani</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/bayani.png" alt="Bayani"><p class="piece-gallery__label">bayani</p></div>
+              </details>
+              <details class="piece-accordion piece--kabayanihan" open>
+                <summary>Kabayanihan</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/kabayanihan.png" alt="Kabayanihan"><p class="piece-gallery__label">kabayanihan</p></div>
+              </details>
+              <details class="piece-accordion piece--kagitingan" open>
+                <summary>Kagitingan</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/kagitingan.png" alt="Kagitingan"><p class="piece-gallery__label">kagitingan</p></div>
+              </details>
+              <details class="piece-accordion piece--kalasag" open>
+                <summary>Kalasag</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/kalasag.png" alt="Kalasag"><p class="piece-gallery__label">kalasag</p></div>
+              </details>
+              <details class="piece-accordion piece--katapangan" open>
+                <summary>Katapangan</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/katapangan.png" alt="Katapangan"><p class="piece-gallery__label">katapangan</p></div>
+              </details>
+              <details class="piece-accordion piece--lakas" open>
+                <summary>Lakas</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/lakas.png" alt="Lakas"><p class="piece-gallery__label">lakas</p></div>
+              </details>
+              <details class="piece-accordion piece--lakas-loob" open>
+                <summary>Lakas Loob</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/lakas-loob.png" alt="Lakas Loob"><p class="piece-gallery__label">lakas-loob</p></div>
+              </details>
+              <details class="piece-accordion piece--mandirigma" open>
+                <summary>Mandirigma</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/mandirigma.png" alt="Mandirigma"><p class="piece-gallery__label">mandirigma</p></div>
+              </details>
+              <details class="piece-accordion piece--matapang" open>
+                <summary>Matapang</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/matapang.png" alt="Matapang"><p class="piece-gallery__label">matapang</p></div>
+              </details>
+              <details class="piece-accordion piece--sigasig" open>
+                <summary>Sigasig</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/sigasig.png" alt="Sigasig"><p class="piece-gallery__label">sigasig</p></div>
+              </details>
+              <details class="piece-accordion piece--tagapagtanggol" open>
+                <summary>Tagapagtanggol</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/tagapagtanggol.png" alt="Tagapagtanggol"><p class="piece-gallery__label">tagapagtanggol</p></div>
+              </details>
+              <details class="piece-accordion piece--tapang" open>
+                <summary>Tapang</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/tapang.png" alt="Tapang"><p class="piece-gallery__label">tapang</p></div>
+              </details>
+              <details class="piece-accordion piece--tapang-loob" open>
+                <summary>Tapang Loob</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/tapang-loob.png" alt="Tapang Loob"><p class="piece-gallery__label">tapang-loob</p></div>
+              </details>
+              <details class="piece-accordion piece--tibay" open>
+                <summary>Tibay</summary>
+                <div class="piece-gallery"><img src="./custom/piece-designs/frames/tibay.png" alt="Tibay"><p class="piece-gallery__label">tibay</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--boards">
+            <summary>Board Skins <span class="accordion-count">10 packs</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--board1" open>
+                <summary>Board 1</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 1.png" alt="Board 1"><p class="piece-gallery__label">Board 1</p></div>
+              </details>
+              <details class="piece-accordion piece--board2" open>
+                <summary>Board 2</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 2.png" alt="Board 2"><p class="piece-gallery__label">Board 2</p></div>
+              </details>
+              <details class="piece-accordion piece--board3" open>
+                <summary>Board 3</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 3.png" alt="Board 3"><p class="piece-gallery__label">Board 3</p></div>
+              </details>
+              <details class="piece-accordion piece--board4" open>
+                <summary>Board 4</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 4.png" alt="Board 4"><p class="piece-gallery__label">Board 4</p></div>
+              </details>
+              <details class="piece-accordion piece--board5" open>
+                <summary>Board 5</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 5.png" alt="Board 5"><p class="piece-gallery__label">Board 5</p></div>
+              </details>
+              <details class="piece-accordion piece--board6" open>
+                <summary>Board 6</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 6.png" alt="Board 6"><p class="piece-gallery__label">Board 6</p></div>
+              </details>
+              <details class="piece-accordion piece--board7" open>
+                <summary>Board 7</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 7.png" alt="Board 7"><p class="piece-gallery__label">Board 7</p></div>
+              </details>
+              <details class="piece-accordion piece--board8" open>
+                <summary>Board 8</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 8.png" alt="Board 8"><p class="piece-gallery__label">Board 8</p></div>
+              </details>
+              <details class="piece-accordion piece--board9" open>
+                <summary>Board 9</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 9.png" alt="Board 9"><p class="piece-gallery__label">Board 9</p></div>
+              </details>
+              <details class="piece-accordion piece--board10" open>
+                <summary>Board 10</summary>
+                <div class="piece-gallery"><img src="./custom/board-skins/Board 10.png" alt="Board 10"><p class="piece-gallery__label">Board 10</p></div>
+              </details>
+            </div>
+          </details>
+
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <p class="eyebrow">Chess Piece Roster</p>
+          <h3>Sub-accordions for every rank with variant images</h3>
+          <p class="lead">Each rank tier carries four visual variants. Expand any accordion to preview all four character files loaded from the manifest.</p>
+        </div>
+        <div class="accordion-list piece-accordions-main">
+
+          <details class="category-accordion category--captain" open>
+            <summary>Captain <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--captain1" open>
+                <summary>Captain 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/captain/captain1.png" alt="Captain 1"><p class="piece-gallery__label">captain 1</p></div>
+              </details>
+              <details class="piece-accordion piece--captain2" open>
+                <summary>Captain 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/captain/captain2.png" alt="Captain 2"><p class="piece-gallery__label">captain 2</p></div>
+              </details>
+              <details class="piece-accordion piece--captain3" open>
+                <summary>Captain 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/captain/captain3.png" alt="Captain 3"><p class="piece-gallery__label">captain 3</p></div>
+              </details>
+              <details class="piece-accordion piece--captain4" open>
+                <summary>Captain 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/captain/captain4.png" alt="Captain 4"><p class="piece-gallery__label">captain 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--colonel">
+            <summary>Colonel <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--colonel1" open>
+                <summary>Colonel 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/colonel/lTcolonel1.png" alt="Colonel 1"><p class="piece-gallery__label">lTcolonel 1</p></div>
+              </details>
+              <details class="piece-accordion piece--colonel2" open>
+                <summary>Colonel 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/colonel/lTcolonel2.png" alt="Colonel 2"><p class="piece-gallery__label">lTcolonel 2</p></div>
+              </details>
+              <details class="piece-accordion piece--colonel3" open>
+                <summary>Colonel 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/colonel/lTcolonel3.png" alt="Colonel 3"><p class="piece-gallery__label">lTcolonel 3</p></div>
+              </details>
+              <details class="piece-accordion piece--colonel4" open>
+                <summary>Colonel 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/colonel/lTcolonel4.png" alt="Colonel 4"><p class="piece-gallery__label">lTcolonel 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--first-lieutenant">
+            <summary>First Lieutenant <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--1stlieutenant1" open>
+                <summary>1st Lieutenant 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/first-lieutenant/1stLieutenant1.png" alt="1st Lieutenant 1"><p class="piece-gallery__label">1stLieutenant 1</p></div>
+              </details>
+              <details class="piece-accordion piece--1stlieutenant2" open>
+                <summary>1st Lieutenant 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/first-lieutenant/1stLieutenant2.png" alt="1st Lieutenant 2"><p class="piece-gallery__label">1stLieutenant 2</p></div>
+              </details>
+              <details class="piece-accordion piece--1stlieutenant3" open>
+                <summary>1st Lieutenant 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/first-lieutenant/1stLieutenant3.png" alt="1st Lieutenant 3"><p class="piece-gallery__label">1stLieutenant 3</p></div>
+              </details>
+              <details class="piece-accordion piece--1stlieutenant4" open>
+                <summary>1st Lieutenant 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/first-lieutenant/1stLieutenant4.png" alt="1st Lieutenant 4"><p class="piece-gallery__label">1stLieutenant 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--five-star-general">
+            <summary>Five-Star General <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--5stargeneral1" open>
+                <summary>5-Star General 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/five-star-general/5starGeneral1.png" alt="5-Star General 1"><p class="piece-gallery__label">5starGeneral 1</p></div>
+              </details>
+              <details class="piece-accordion piece--5stargeneral2" open>
+                <summary>5-Star General 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/five-star-general/5starGeneral2.png" alt="5-Star General 2"><p class="piece-gallery__label">5starGeneral 2</p></div>
+              </details>
+              <details class="piece-accordion piece--5stargeneral3" open>
+                <summary>5-Star General 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/five-star-general/5starGeneral3.png" alt="5-Star General 3"><p class="piece-gallery__label">5starGeneral 3</p></div>
+              </details>
+              <details class="piece-accordion piece--5stargeneral4" open>
+                <summary>5-Star General 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/five-star-general/5starGeneral4.png" alt="5-Star General 4"><p class="piece-gallery__label">5starGeneral 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--four-star-general">
+            <summary>Four-Star General <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--4stargeneral1" open>
+                <summary>4-Star General 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/four-star-general/4starGeneral1.png" alt="4-Star General 1"><p class="piece-gallery__label">4starGeneral 1</p></div>
+              </details>
+              <details class="piece-accordion piece--4stargeneral2" open>
+                <summary>4-Star General 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/four-star-general/4starGeneral2.png" alt="4-Star General 2"><p class="piece-gallery__label">4starGeneral 2</p></div>
+              </details>
+              <details class="piece-accordion piece--4stargeneral3" open>
+                <summary>4-Star General 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/four-star-general/4starGeneral3.png" alt="4-Star General 3"><p class="piece-gallery__label">4starGeneral 3</p></div>
+              </details>
+              <details class="piece-accordion piece--4stargeneral4" open>
+                <summary>4-Star General 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/four-star-general/4starGeneral4.png" alt="4-Star General 4"><p class="piece-gallery__label">4starGeneral 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--lieutenant-colonel">
+            <summary>Lieutenant Colonel <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--lieutenant-colonel1" open>
+                <summary>Lieutenant Colonel 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/lieutenant-colonel/colonel1.png" alt="Lieutenant Colonel 1"><p class="piece-gallery__label">colonel 1</p></div>
+              </details>
+              <details class="piece-accordion piece--lieutenant-colonel2" open>
+                <summary>Lieutenant Colonel 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/lieutenant-colonel/colonel2.png" alt="Lieutenant Colonel 2"><p class="piece-gallery__label">colonel 2</p></div>
+              </details>
+              <details class="piece-accordion piece--lieutenant-colonel3" open>
+                <summary>Lieutenant Colonel 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/lieutenant-colonel/colonel3.png" alt="Lieutenant Colonel 3"><p class="piece-gallery__label">colonel 3</p></div>
+              </details>
+              <details class="piece-accordion piece--lieutenant-colonel4" open>
+                <summary>Lieutenant Colonel 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/lieutenant-colonel/colonel4.png" alt="Lieutenant Colonel 4"><p class="piece-gallery__label">colonel 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--major">
+            <summary>Major <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--major1" open>
+                <summary>Major 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/major/major1.png" alt="Major 1"><p class="piece-gallery__label">major 1</p></div>
+              </details>
+              <details class="piece-accordion piece--major2" open>
+                <summary>Major 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/major/major2.png" alt="Major 2"><p class="piece-gallery__label">major 2</p></div>
+              </details>
+              <details class="piece-accordion piece--major3" open>
+                <summary>Major 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/major/major3.png" alt="Major 3"><p class="piece-gallery__label">major 3</p></div>
+              </details>
+              <details class="piece-accordion piece--major4" open>
+                <summary>Major 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/major/major4.png" alt="Major 4"><p class="piece-gallery__label">major 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--one-star-general">
+            <summary>One-Star General <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--1stargeneral1" open>
+                <summary>1-Star General 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/one-star-general/1starGeneral1.png" alt="1-Star General 1"><p class="piece-gallery__label">1starGeneral 1</p></div>
+              </details>
+              <details class="piece-accordion piece--1stargeneral2" open>
+                <summary>1-Star General 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/one-star-general/1starGeneral2.png" alt="1-Star General 2"><p class="piece-gallery__label">1starGeneral 2</p></div>
+              </details>
+              <details class="piece-accordion piece--1stargeneral3" open>
+                <summary>1-Star General 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/one-star-general/1starGeneral3.png" alt="1-Star General 3"><p class="piece-gallery__label">1starGeneral 3</p></div>
+              </details>
+              <details class="piece-accordion piece--1stargeneral4" open>
+                <summary>1-Star General 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/one-star-general/1starGeneral4.png" alt="1-Star General 4"><p class="piece-gallery__label">1starGeneral 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--private">
+            <summary>Private <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--private1" open>
+                <summary>Private 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/private/private1.png" alt="Private 1"><p class="piece-gallery__label">private 1</p></div>
+              </details>
+              <details class="piece-accordion piece--private2" open>
+                <summary>Private 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/private/private2.png" alt="Private 2"><p class="piece-gallery__label">private 2</p></div>
+              </details>
+              <details class="piece-accordion piece--private3" open>
+                <summary>Private 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/private/private3.png" alt="Private 3"><p class="piece-gallery__label">private 3</p></div>
+              </details>
+              <details class="piece-accordion piece--private4" open>
+                <summary>Private 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/private/private4.png" alt="Private 4"><p class="piece-gallery__label">private 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--second-lieutenant">
+            <summary>Second Lieutenant <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--2ndlieutenant1" open>
+                <summary>2nd Lieutenant 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/second-lieutenant/2ndLieutenant1.png" alt="2nd Lieutenant 1"><p class="piece-gallery__label">2ndLieutenant 1</p></div>
+              </details>
+              <details class="piece-accordion piece--2ndlieutenant2" open>
+                <summary>2nd Lieutenant 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/second-lieutenant/2ndLieutenant2.png" alt="2nd Lieutenant 2"><p class="piece-gallery__label">2ndLieutenant 2</p></div>
+              </details>
+              <details class="piece-accordion piece--2ndlieutenant3" open>
+                <summary>2nd Lieutenant 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/second-lieutenant/2ndLieutenant3.png" alt="2nd Lieutenant 3"><p class="piece-gallery__label">2ndLieutenant 3</p></div>
+              </details>
+              <details class="piece-accordion piece--2ndlieutenant4" open>
+                <summary>2nd Lieutenant 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/second-lieutenant/2ndLieutenant4.png" alt="2nd Lieutenant 4"><p class="piece-gallery__label">2ndLieutenant 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--sergeant">
+            <summary>Sergeant <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--sergeant1" open>
+                <summary>Sergeant 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/sergeant/sergeant1.png" alt="Sergeant 1"><p class="piece-gallery__label">sergeant 1</p></div>
+              </details>
+              <details class="piece-accordion piece--sergeant2" open>
+                <summary>Sergeant 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/sergeant/sergeant2.png" alt="Sergeant 2"><p class="piece-gallery__label">sergeant 2</p></div>
+              </details>
+              <details class="piece-accordion piece--sergeant3" open>
+                <summary>Sergeant 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/sergeant/sergeant3.png" alt="Sergeant 3"><p class="piece-gallery__label">sergeant 3</p></div>
+              </details>
+              <details class="piece-accordion piece--sergeant4" open>
+                <summary>Sergeant 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/sergeant/sergeant4.png" alt="Sergeant 4"><p class="piece-gallery__label">sergeant 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--spy">
+            <summary>Spy <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--spy1" open>
+                <summary>Spy 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/spy/spy1.png" alt="Spy 1"><p class="piece-gallery__label">spy 1</p></div>
+              </details>
+              <details class="piece-accordion piece--spy2" open>
+                <summary>Spy 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/spy/spy2.png" alt="Spy 2"><p class="piece-gallery__label">spy 2</p></div>
+              </details>
+              <details class="piece-accordion piece--spy3" open>
+                <summary>Spy 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/spy/spy3.png" alt="Spy 3"><p class="piece-gallery__label">spy 3</p></div>
+              </details>
+              <details class="piece-accordion piece--spy4" open>
+                <summary>Spy 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/spy/spy4.png" alt="Spy 4"><p class="piece-gallery__label">spy 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--three-star-general">
+            <summary>Three-Star General <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--3stargeneral1" open>
+                <summary>3-Star General 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/three-star-general/3starGeneral1.png" alt="3-Star General 1"><p class="piece-gallery__label">3starGeneral 1</p></div>
+              </details>
+              <details class="piece-accordion piece--3stargeneral2" open>
+                <summary>3-Star General 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/three-star-general/3starGeneral2.png" alt="3-Star General 2"><p class="piece-gallery__label">3starGeneral 2</p></div>
+              </details>
+              <details class="piece-accordion piece--3stargeneral3" open>
+                <summary>3-Star General 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/three-star-general/3starGeneral3.png" alt="3-Star General 3"><p class="piece-gallery__label">3starGeneral 3</p></div>
+              </details>
+              <details class="piece-accordion piece--3stargeneral4" open>
+                <summary>3-Star General 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/three-star-general/3starGeneral4.png" alt="3-Star General 4"><p class="piece-gallery__label">3starGeneral 4</p></div>
+              </details>
+            </div>
+          </details>
+
+          <details class="category-accordion category--two-star-general">
+            <summary>Two-Star General <span class="accordion-count">4 variants</span></summary>
+            <div class="sub-accordions">
+              <details class="piece-accordion piece--2ndstargeneral1" open>
+                <summary>2-Star General 1</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/two-star-general/2starGeneral1.png" alt="2-Star General 1"><p class="piece-gallery__label">2starGeneral 1</p></div>
+              </details>
+              <details class="piece-accordion piece--2ndstargeneral2" open>
+                <summary>2-Star General 2</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/two-star-general/2starGeneral2.png" alt="2-Star General 2"><p class="piece-gallery__label">2starGeneral 2</p></div>
+              </details>
+              <details class="piece-accordion piece--2ndstargeneral3" open>
+                <summary>2-Star General 3</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/two-star-general/2starGeneral3.png" alt="2-Star General 3"><p class="piece-gallery__label">2starGeneral 3</p></div>
+              </details>
+              <details class="piece-accordion piece--2ndstargeneral4" open>
+                <summary>2-Star General 4</summary>
+                <div class="piece-gallery"><img src="./custom/pieces/two-star-general/2starGeneral4.png" alt="2-Star General 4"><p class="piece-gallery__label">2starGeneral 4</p></div>
+              </details>
+            </div>
+          </details>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="./assets/data/assets-manifest.js"></script>
+  <script src="./assets/js/asset-loader.js"></script>
+  <script src="./assets/js/app.js"></script>
+  <script>
+    (function () {
+      document.querySelectorAll('.category-accordion summary').forEach(function (summary) {
+        var toggle = document.createElement('span');
+        toggle.className = 'accordion-toggle';
+        toggle.textContent = '+';
+        summary.appendChild(toggle);
+      });
+
+      document.querySelectorAll('.category-accordion').forEach(function (details) {
+        var summary = details.querySelector('summary');
+        var toggle = summary ? summary.querySelector('.accordion-toggle') : null;
+        var panel = details.querySelector('.sub-accordions');
+
+        function updateToggleUI(open) {
+          if (!toggle) return;
+          toggle.textContent = open ? '\u2212' : '+';
+          toggle.classList.toggle('is-open', open);
+          toggle.classList.toggle('is-closed', !open);
+        }
+
+        function slideDown() {
+          if (!panel) return;
+          details.open = true;
+          panel.style.height = 'auto';
+          panel.style.transition = 'none';
+          panel.offsetHeight;
+          var targetHeight = panel.scrollHeight;
+          panel.style.height = '0px';
+          panel.offsetHeight;
+          requestAnimationFrame(function() {
+            panel.style.transition = 'height 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            panel.style.height = targetHeight + 'px';
+            setTimeout(function () {
+              panel.style.height = 'auto';
+            }, 350);
+          });
+          updateToggleUI(true);
+        }
+
+        function slideUp() {
+          if (!panel) return;
+          var currentHeight = panel.scrollHeight;
+          panel.style.height = currentHeight + 'px';
+          panel.offsetHeight;
+          panel.style.height = '0px';
+          setTimeout(function () {
+            details.open = false;
+          }, 350);
+          updateToggleUI(false);
+        }
+
+        updateToggleUI(details.open);
+
+        if (panel && !details.open) {
+          panel.style.height = '0px';
+        }
+
+        summary.addEventListener('click', function (event) {
+          event.preventDefault();
+          if (details.open) {
+            slideUp();
+          } else {
+            slideDown();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
+

@@ -406,9 +406,12 @@ code {
 
 .feature-grid,
 .difficulty-grid,
-.dual-panel,
 .setup-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dual-panel {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .feature-grid,
@@ -418,6 +421,10 @@ code {
 .battle-layout {
   display: grid;
   gap: 20px;
+}
+
+.dual-panel {
+  margin-block: 24px;
 }
 
 .difficulty-card h4,
@@ -1200,3 +1207,310 @@ code {
     width: 100%;
   }
 }
+
+.category-accordions,
+.piece-accordions-main {
+  margin-top: 8px;
+}
+
+.category-accordion {
+  margin-bottom: 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 40%),
+    rgba(18, 24, 39, 0.85);
+  box-shadow: var(--shadow);
+}
+
+.category-accordion summary {
+  padding: 18px 20px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.category-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-toggle {
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--bg);
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--muted);
+  border-radius: 50%;
+  margin-left: 14px;
+  transition: transform 0.25s ease, background 0.2s ease;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.category-accordion .accordion-toggle.is-open {
+  background: var(--gold);
+}
+
+.category-accordion .accordion-toggle.is-closed {
+  background: var(--muted);
+}
+
+.category-accordion[open] summary {
+  color: var(--gold);
+}
+
+.accordion-count {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(107, 114, 127, 0.2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-left: auto;
+}
+
+.sub-accordions {
+  padding: 10px 16px 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  overflow: hidden;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.piece-accordion {
+  border-radius: 20px;
+  border: 1px solid rgba(107, 114, 127, 0.18);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.piece-accordion summary {
+  display: none;
+}
+
+.piece-accordion[open] summary {
+  display: none;
+}
+
+.piece-gallery {
+  padding: 10px 16px 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  flex: 1;
+}
+
+.piece-gallery img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(107, 114, 127, 0.15);
+  padding: 14px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.piece-gallery__label {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.piece-gallery img:hover {
+  transform: scale(1.04);
+  border-color: var(--gold);
+}
+
+@media (max-width: 720px) {
+  .sub-accordions {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .piece-accordion summary {
+    padding: 14px 16px;
+    font-size: 0.9rem;
+  }
+
+  .piece-gallery {
+    padding: 0 12px 14px;
+  }
+
+  .piece-gallery img {
+    aspect-ratio: 1 / 1;
+    max-height: 180px;
+    padding: 10px;
+  }
+}
+
+.category--flags {
+  background:
+    linear-gradient(135deg, rgba(142, 103, 71, 0.12), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.category--ranks {
+  background:
+    linear-gradient(135deg, rgba(20, 96, 111, 0.15), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.category--pieces {
+  background:
+    linear-gradient(135deg, rgba(42, 70, 53, 0.15), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.category--boards {
+  background:
+    linear-gradient(135deg, rgba(117, 90, 58, 0.18), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.category--banners {
+  background:
+    linear-gradient(135deg, rgba(122, 71, 71, 0.15), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.category--ui {
+  background:
+    linear-gradient(135deg, rgba(107, 114, 127, 0.15), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.category--fx {
+  background:
+    linear-gradient(135deg, rgba(13, 79, 93, 0.2), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+    rgba(18, 24, 39, 0.9);
+}
+
+.piece--brazil { background: linear-gradient(90deg, rgba(0, 156, 59, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--china { background: linear-gradient(90deg, rgba(222, 41, 16, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--france { background: linear-gradient(90deg, rgba(0, 85, 164, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--germany { background: linear-gradient(90deg, rgba(0, 0, 0, 0.15), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--india { background: linear-gradient(90deg, rgba(255, 153, 51, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--japan { background: linear-gradient(90deg, rgba(188, 0, 0, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--korea { background: linear-gradient(90deg, rgba(0, 56, 147, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--philippines { background: linear-gradient(90deg, rgba(0, 56, 147, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--russia { background: linear-gradient(90deg, rgba(0, 57, 166, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--united-kingdom { background: linear-gradient(90deg, rgba(0, 35, 149, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--united-states { background: linear-gradient(90deg, rgba(178, 34, 52, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--general-commander { background: linear-gradient(90deg, rgba(142, 103, 71, 0.12), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--shadow-scout { background: linear-gradient(90deg, rgba(107, 114, 127, 0.15), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--bayanihan { background: linear-gradient(90deg, rgba(122, 71, 71, 0.12), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--sun-star { background: linear-gradient(90deg, rgba(142, 103, 71, 0.12), transparent 60%), rgba(18, 24, 39, 0.7); }
+.piece--fog-sweep { background: linear-gradient(90deg, rgba(13, 79, 93, 0.15), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.category--captain { background: linear-gradient(135deg, rgba(20, 96, 111, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--colonel { background: linear-gradient(135deg, rgba(42, 70, 53, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--first-lieutenant { background: linear-gradient(135deg, rgba(107, 114, 127, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--five-star-general { background: linear-gradient(135deg, rgba(142, 103, 71, 0.15), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--four-star-general { background: linear-gradient(135deg, rgba(117, 90, 58, 0.14), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--lieutenant-colonel { background: linear-gradient(135deg, rgba(13, 79, 93, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--major { background: linear-gradient(135deg, rgba(122, 71, 71, 0.1), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--one-star-general { background: linear-gradient(135deg, rgba(142, 103, 71, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--private { background: linear-gradient(135deg, rgba(107, 114, 127, 0.1), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--second-lieutenant { background: linear-gradient(135deg, rgba(20, 96, 111, 0.1), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--sergeant { background: linear-gradient(135deg, rgba(42, 70, 53, 0.1), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--spy { background: linear-gradient(135deg, rgba(122, 71, 71, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--three-star-general { background: linear-gradient(135deg, rgba(117, 90, 58, 0.12), transparent 50%), rgba(18, 24, 39, 0.9); }
+.category--two-star-general { background: linear-gradient(135deg, rgba(13, 79, 93, 0.1), transparent 50%), rgba(18, 24, 39, 0.9); }
+
+.piece--captain1,
+.piece--captain2,
+.piece--captain3,
+.piece--captain4 { background: linear-gradient(90deg, rgba(20, 96, 111, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--colonel1,
+.piece--colonel2,
+.piece--colonel3,
+.piece--colonel4 { background: linear-gradient(90deg, rgba(42, 70, 53, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--1stlieutenant1,
+.piece--1stlieutenant2,
+.piece--1stlieutenant3,
+.piece--1stlieutenant4 { background: linear-gradient(90deg, rgba(107, 114, 127, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--5stargeneral1,
+.piece--5stargeneral2,
+.piece--5stargeneral3,
+.piece--5stargeneral4 { background: linear-gradient(90deg, rgba(142, 103, 71, 0.12), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--4stargeneral1,
+.piece--4stargeneral2,
+.piece--4stargeneral3,
+.piece--4stargeneral4 { background: linear-gradient(90deg, rgba(117, 90, 58, 0.12), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--lieutenant-colonel1,
+.piece--lieutenant-colonel2,
+.piece--lieutenant-colonel3,
+.piece--lieutenant-colonel4 { background: linear-gradient(90deg, rgba(13, 79, 93, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--major1,
+.piece--major2,
+.piece--major3,
+.piece--major4 { background: linear-gradient(90deg, rgba(122, 71, 71, 0.08), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--1stargeneral1,
+.piece--1stargeneral2,
+.piece--1stargeneral3,
+.piece--1stargeneral4 { background: linear-gradient(90deg, rgba(142, 103, 71, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--private1,
+.piece--private2,
+.piece--private3,
+.piece--private4 { background: linear-gradient(90deg, rgba(107, 114, 127, 0.08), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--2ndlieutenant1,
+.piece--2ndlieutenant2,
+.piece--2ndlieutenant3,
+.piece--2ndlieutenant4 { background: linear-gradient(90deg, rgba(20, 96, 111, 0.08), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--sergeant1,
+.piece--sergeant2,
+.piece--sergeant3,
+.piece--sergeant4 { background: linear-gradient(90deg, rgba(42, 70, 53, 0.08), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--spy1,
+.piece--spy2,
+.piece--spy3,
+.piece--spy4 { background: linear-gradient(90deg, rgba(122, 71, 71, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--3stargeneral1,
+.piece--3stargeneral2,
+.piece--3stargeneral3,
+.piece--3stargeneral4 { background: linear-gradient(90deg, rgba(117, 90, 58, 0.1), transparent 60%), rgba(18, 24, 39, 0.7); }
+
+.piece--2ndstargeneral1,
+.piece--2ndstargeneral2,
+.piece--2ndstargeneral3,
+.piece--2ndstargeneral4 { background: linear-gradient(90deg, rgba(13, 79, 93, 0.08), transparent 60%), rgba(18, 24, 39, 0.7); }
