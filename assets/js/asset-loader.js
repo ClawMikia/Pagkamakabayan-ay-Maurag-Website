@@ -6,7 +6,6 @@
     counts: {},
     assets: {
       "country-flags": [],
-      "rank-characters": [],
       "piece-designs": [],
       "piece-colors": [],
       portraits: [],

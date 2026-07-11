@@ -38,24 +38,28 @@ const STOPWATCH_KEY = "pagkamakabayanStopwatch";
 
 const setupCarouselDefinitions = [
   { key: "flag", category: "country-flags", emptyLabel: "No flags found yet." },
-  { key: "fiveStarGeneral", category: "piece-designs-regular", emptyLabel: "No Five-Star General pieces found yet." },
-  { key: "fourStarGeneral", category: "piece-designs-regular", emptyLabel: "No Four-Star General pieces found yet." },
-  { key: "threeStarGeneral", category: "piece-designs-regular", emptyLabel: "No Three-Star General pieces found yet." },
-  { key: "twoStarGeneral", category: "piece-designs-regular", emptyLabel: "No Two-Star General pieces found yet." },
-  { key: "oneStarGeneral", category: "piece-designs-regular", emptyLabel: "No One-Star General pieces found yet." },
-  { key: "colonel", category: "piece-designs-regular", emptyLabel: "No Colonel pieces found yet." },
-  { key: "lieutenantColonel", category: "piece-designs-regular", emptyLabel: "No Lieutenant Colonel pieces found yet." },
-  { key: "major", category: "piece-designs-regular", emptyLabel: "No Major pieces found yet." },
-  { key: "captain", category: "piece-designs-regular", emptyLabel: "No Captain pieces found yet." },
-  { key: "firstLieutenant", category: "piece-designs-regular", emptyLabel: "No First Lieutenant pieces found yet." },
-  { key: "secondLieutenant", category: "piece-designs-regular", emptyLabel: "No Second Lieutenant pieces found yet." },
-  { key: "sergeant", category: "piece-designs-skirmish", emptyLabel: "No Sergeant pieces found yet." },
-  { key: "spy", category: "piece-designs-flag", emptyLabel: "No Spy pieces found yet." },
-  { key: "private", category: "piece-designs-skirmish", emptyLabel: "No Private pieces found yet." },
+  { key: "fiveStarGeneral", category: "pieces/five-star-general", emptyLabel: "No Five-Star General pieces found yet." },
+  { key: "fourStarGeneral", category: "pieces/four-star-general", emptyLabel: "No Four-Star General pieces found yet." },
+  { key: "threeStarGeneral", category: "pieces/three-star-general", emptyLabel: "No Three-Star General pieces found yet." },
+  { key: "twoStarGeneral", category: "pieces/two-star-general", emptyLabel: "No Two-Star General pieces found yet." },
+  { key: "oneStarGeneral", category: "pieces/one-star-general", emptyLabel: "No One-Star General pieces found yet." },
+  { key: "colonel", category: "pieces/colonel", emptyLabel: "No Colonel pieces found yet." },
+  { key: "lieutenantColonel", category: "pieces/lieutenant-colonel", emptyLabel: "No Lieutenant Colonel pieces found yet." },
+  { key: "major", category: "pieces/major", emptyLabel: "No Major pieces found yet." },
+  { key: "captain", category: "pieces/captain", emptyLabel: "No Captain pieces found yet." },
+  { key: "firstLieutenant", category: "pieces/first-lieutenant", emptyLabel: "No First Lieutenant pieces found yet." },
+  { key: "secondLieutenant", category: "pieces/second-lieutenant", emptyLabel: "No Second Lieutenant pieces found yet." },
+  { key: "sergeant", category: "pieces/sergeant", emptyLabel: "No Sergeant pieces found yet." },
+  { key: "spy", category: "pieces/spy", emptyLabel: "No Spy pieces found yet." },
+  { key: "private", category: "pieces/private", emptyLabel: "No Private pieces found yet." },
   { key: "pieceDesign", category: "piece-designs", emptyLabel: "No piece designs found yet." },
   { key: "pieceColor", category: "piece-colors", emptyLabel: "No piece color skins found yet." },
   { key: "board", category: "board-skins", emptyLabel: "No board skins found yet." }
 ];
+
+const pieceCategoryKeys = setupCarouselDefinitions
+  .filter((definition) => definition.category.startsWith("pieces/"))
+  .map((definition) => definition.category);
 
 document.addEventListener("DOMContentLoaded", async () => {
   const manifest = await window.siteAssets;
@@ -110,10 +114,7 @@ function populateAssetPreviews(manifest) {
 
   const categories = [
     "country-flags",
-    "piece-designs-flag",
-    "piece-designs-regular",
-    "piece-designs-skirmish",
-    "piece-designs-sparring",
+    ...pieceCategoryKeys,
     "piece-designs",
     "piece-colors",
     "board-skins",
@@ -218,18 +219,10 @@ function initSetupPage(manifest) {
 
   renderDifficultyFocus(difficultyFocus, difficultySelect.value);
   renderAssetShowcase(showcaseRoots.flags, manifest.assets?.["country-flags"]);
-  renderAssetShowcase(showcaseRoots.ranks, [
-    ...(manifest.assets?.["piece-designs-flag"] || []),
-    ...(manifest.assets?.["piece-designs-regular"] || []),
-    ...(manifest.assets?.["piece-designs-skirmish"] || []),
-    ...(manifest.assets?.["piece-designs-sparring"] || [])
-  ]);
+  renderAssetShowcase(showcaseRoots.ranks, pieceCategoryKeys.flatMap((key) => manifest.assets?.[key] || []));
   renderCombinedShowcase(showcaseRoots.pieces, [
     ...(manifest.assets?.["piece-designs"] || []),
-    ...(manifest.assets?.["piece-designs-flag"] || []),
-    ...(manifest.assets?.["piece-designs-regular"] || []),
-    ...(manifest.assets?.["piece-designs-skirmish"] || []),
-    ...(manifest.assets?.["piece-designs-sparring"] || []),
+    ...pieceCategoryKeys.flatMap((key) => manifest.assets?.[key] || []),
     ...(manifest.assets?.["piece-colors"] || [])
   ]);
   renderAssetShowcase(showcaseRoots.boards, manifest.assets?.["board-skins"]);
@@ -255,7 +248,8 @@ function initSetupPage(manifest) {
 }
 
 function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel, onChange }) {
-  let currentIndex = Math.max(0, assets.findIndex((asset) => asset.fileName === savedValue));
+  let currentAssets = [...(assets || [])];
+  let currentIndex = Math.max(0, currentAssets.findIndex((asset) => asset.fileName === savedValue));
   if (currentIndex === -1) currentIndex = 0;
 
   if (!root || !hiddenInput) {
@@ -266,18 +260,10 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
     };
   }
 
-  if (!assets.length) {
-    hiddenInput.value = "";
-    root.innerHTML = `<div class="empty-state">${emptyLabel} Add images and run refresh-assets.ps1.</div>`;
-    return {
-      getSelectedAsset: () => null,
-      getSelectedLabel: () => "none selected",
-      getSelectedValue: () => ""
-    };
-  }
+  const uploadId = `upload-${Math.random().toString(36).slice(2)}`;
 
   root.innerHTML = `
-    <div class="visual-carousel">
+    <div class="visual-carousel" data-carousel-dropzone>
       <button class="visual-carousel__button" type="button" data-carousel-prev aria-label="Previous option">Previous</button>
       <div class="visual-carousel__viewport">
         <div class="visual-carousel__side visual-carousel__side--prev" data-carousel-prev-card></div>
@@ -292,6 +278,10 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
         <div class="visual-carousel__side visual-carousel__side--next" data-carousel-next-card></div>
       </div>
       <button class="visual-carousel__button" type="button" data-carousel-next aria-label="Next option">Next</button>
+      <div class="visual-carousel__upload">
+        <label class="button button--ghost visual-carousel__upload-btn" for="${uploadId}">+ Add images</label>
+        <input id="${uploadId}" class="visual-carousel__upload-input" type="file" accept="image/*" multiple hidden>
+      </div>
     </div>
   `;
 
@@ -305,17 +295,28 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   const dots = root.querySelector("[data-carousel-dots]");
 
   const render = () => {
-    const currentAsset = assets[currentIndex];
-    const previousAsset = assets[(currentIndex - 1 + assets.length) % assets.length];
-    const nextAsset = assets[(currentIndex + 1) % assets.length];
+    if (!currentAssets.length) {
+      hiddenInput.value = "";
+      title.textContent = "";
+      count.textContent = "0 of 0";
+      mainCard.innerHTML = `<div class="empty-state">${emptyLabel} Drop images here or run refresh-assets.ps1.</div>`;
+      prevCard.innerHTML = "";
+      nextCard.innerHTML = "";
+      dots.innerHTML = "";
+      return;
+    }
+
+    const currentAsset = currentAssets[currentIndex];
+    const previousAsset = currentAssets[(currentIndex - 1 + currentAssets.length) % currentAssets.length];
+    const nextAsset = currentAssets[(currentIndex + 1) % currentAssets.length];
 
     hiddenInput.value = currentAsset.fileName;
     title.textContent = currentAsset.label || window.PagkamakabayanAssets.normalizeName(currentAsset.fileName);
-    count.textContent = `${currentIndex + 1} of ${assets.length}`;
+    count.textContent = `${currentIndex + 1} of ${currentAssets.length}`;
     mainCard.innerHTML = renderCarouselCard(currentAsset, "Current");
     prevCard.innerHTML = renderCarouselCard(previousAsset, "Previous");
     nextCard.innerHTML = renderCarouselCard(nextAsset, "Next");
-    dots.innerHTML = assets
+    dots.innerHTML = currentAssets
       .map((asset, index) => `<button class="visual-carousel__dot${index === currentIndex ? " is-active" : ""}" type="button" data-carousel-dot="${index}" aria-label="Select ${asset.label || asset.fileName}"></button>`)
       .join("");
 
@@ -331,7 +332,7 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   let isAnimating = false;
 
   const animateCarousel = (direction) => {
-    if (isAnimating) return;
+    if (isAnimating || !currentAssets.length) return;
     isAnimating = true;
 
     const exitClass = direction === "next" ? "visual-carousel__frame--exiting-left" : "visual-carousel__frame--exiting-right";
@@ -343,8 +344,8 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
       mainCard.classList.remove(exitClass);
 
       currentIndex = direction === "next"
-        ? (currentIndex + 1) % assets.length
-        : (currentIndex - 1 + assets.length) % assets.length;
+        ? (currentIndex + 1) % currentAssets.length
+        : (currentIndex - 1 + currentAssets.length) % currentAssets.length;
 
       render();
       onChange?.();
@@ -359,6 +360,52 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
     }, 280);
   };
 
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function addLocalFiles(fileList) {
+    const images = Array.from(fileList || []).filter((file) => file.type.startsWith("image/"));
+    if (!images.length) return;
+    const startIndex = currentAssets.length;
+    for (const file of images) {
+      const dataUrl = await readFileAsDataURL(file);
+      currentAssets.push({
+        category: "",
+        fileName: file.name,
+        label: window.PagkamakabayanAssets.normalizeName(file.name),
+        url: dataUrl,
+        local: true
+      });
+    }
+    if (startIndex === 0) currentIndex = 0;
+    render();
+    onChange?.();
+  }
+
+  const uploadInput = root.querySelector(`#${uploadId}`);
+  uploadInput?.addEventListener("change", (event) => {
+    addLocalFiles(event.target.files);
+    event.target.value = "";
+  });
+
+  const dropzone = root.querySelector("[data-carousel-dropzone]");
+  dropzone?.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    dropzone.classList.add("is-drop-target");
+  });
+  dropzone?.addEventListener("dragleave", () => dropzone.classList.remove("is-drop-target"));
+  dropzone?.addEventListener("drop", (event) => {
+    event.preventDefault();
+    dropzone.classList.remove("is-drop-target");
+    if (event.dataTransfer?.files?.length) addLocalFiles(event.dataTransfer.files);
+  });
+
   prevButton?.addEventListener("click", () => animateCarousel("prev"));
 
   nextButton?.addEventListener("click", () => animateCarousel("next"));
@@ -366,9 +413,10 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   render();
 
   return {
-    getSelectedAsset: () => assets[currentIndex] || null,
-    getSelectedLabel: () => assets[currentIndex]?.label || window.PagkamakabayanAssets.normalizeName(assets[currentIndex]?.fileName || "none"),
-    getSelectedValue: () => assets[currentIndex]?.fileName || ""
+    getSelectedAsset: () => currentAssets[currentIndex] || null,
+    getSelectedLabel: () => currentAssets[currentIndex]?.label || window.PagkamakabayanAssets.normalizeName(currentAssets[currentIndex]?.fileName || "none"),
+    getSelectedValue: () => currentAssets[currentIndex]?.fileName || "",
+    addLocalFiles
   };
 }
 

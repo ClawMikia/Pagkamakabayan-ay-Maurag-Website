@@ -21,10 +21,17 @@ $flatCategories = @(
 
 $subfolderCategories = @(
     @{ name = 'piece-designs'; label = 'Design Frames' }
-    @{ name = 'piece-designs-flag'; label = 'Flag Pieces' }
-    @{ name = 'piece-designs-regular'; label = 'Regular Force' }
-    @{ name = 'piece-designs-skirmish'; label = 'Skirmish Force' }
-    @{ name = 'piece-designs-sparring'; label = 'Sparring Variants' }
+)
+
+$pieceTypeRoot = Join-Path $customRoot 'pieces'
+if (-not (Test-Path -LiteralPath $pieceTypeRoot)) {
+    New-Item -ItemType Directory -Path $pieceTypeRoot -Force | Out-Null
+}
+
+$pieceCategories = @(
+    Get-ChildItem -LiteralPath $pieceTypeRoot -Directory |
+        Sort-Object Name |
+        ForEach-Object { @{ name = "pieces/$($_.Name)"; label = "Piece: $($_.Name)" } }
 )
 
 function Convert-ToLabel {
@@ -97,7 +104,7 @@ foreach ($category in $flatCategories) {
     $counts[$category] = $manifestAssets[$category].Count
 }
 
-foreach ($entry in $subfolderCategories) {
+foreach ($entry in ($subfolderCategories + $pieceCategories)) {
     $category = $entry.name
     $categoryPath = Join-Path $customRoot $category
     $files = Get-ChildItem -LiteralPath $categoryPath -File -Recurse |
