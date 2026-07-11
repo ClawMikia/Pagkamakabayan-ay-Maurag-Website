@@ -260,8 +260,6 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
     };
   }
 
-  const uploadId = `upload-${Math.random().toString(36).slice(2)}`;
-
   root.innerHTML = `
     <div class="visual-carousel" data-carousel-dropzone>
       <button class="visual-carousel__button" type="button" data-carousel-prev aria-label="Previous option">Previous</button>
@@ -278,10 +276,6 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
         <div class="visual-carousel__side visual-carousel__side--next" data-carousel-next-card></div>
       </div>
       <button class="visual-carousel__button" type="button" data-carousel-next aria-label="Next option">Next</button>
-      <div class="visual-carousel__upload">
-        <label class="button button--ghost visual-carousel__upload-btn" for="${uploadId}">+ Add images</label>
-        <input id="${uploadId}" class="visual-carousel__upload-input" type="file" accept="image/*" multiple hidden>
-      </div>
     </div>
   `;
 
@@ -360,52 +354,6 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
     }, 280);
   };
 
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function addLocalFiles(fileList) {
-    const images = Array.from(fileList || []).filter((file) => file.type.startsWith("image/"));
-    if (!images.length) return;
-    const startIndex = currentAssets.length;
-    for (const file of images) {
-      const dataUrl = await readFileAsDataURL(file);
-      currentAssets.push({
-        category: "",
-        fileName: file.name,
-        label: window.PagkamakabayanAssets.normalizeName(file.name),
-        url: dataUrl,
-        local: true
-      });
-    }
-    if (startIndex === 0) currentIndex = 0;
-    render();
-    onChange?.();
-  }
-
-  const uploadInput = root.querySelector(`#${uploadId}`);
-  uploadInput?.addEventListener("change", (event) => {
-    addLocalFiles(event.target.files);
-    event.target.value = "";
-  });
-
-  const dropzone = root.querySelector("[data-carousel-dropzone]");
-  dropzone?.addEventListener("dragover", (event) => {
-    event.preventDefault();
-    dropzone.classList.add("is-drop-target");
-  });
-  dropzone?.addEventListener("dragleave", () => dropzone.classList.remove("is-drop-target"));
-  dropzone?.addEventListener("drop", (event) => {
-    event.preventDefault();
-    dropzone.classList.remove("is-drop-target");
-    if (event.dataTransfer?.files?.length) addLocalFiles(event.dataTransfer.files);
-  });
-
   prevButton?.addEventListener("click", () => animateCarousel("prev"));
 
   nextButton?.addEventListener("click", () => animateCarousel("next"));
@@ -415,8 +363,7 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   return {
     getSelectedAsset: () => currentAssets[currentIndex] || null,
     getSelectedLabel: () => currentAssets[currentIndex]?.label || window.PagkamakabayanAssets.normalizeName(currentAssets[currentIndex]?.fileName || "none"),
-    getSelectedValue: () => currentAssets[currentIndex]?.fileName || "",
-    addLocalFiles
+    getSelectedValue: () => currentAssets[currentIndex]?.fileName || ""
   };
 }
 
@@ -652,19 +599,8 @@ function collectSetupState(form, difficultySelect, carousels) {
   return {
     faction: String(formData.get("faction") || ""),
     difficulty: difficultySelect.value,
-    ...Object.fromEntries(carouselKeys.map((key) => [key, carousels[key]?.getSelectedValue() || ""])),
-    modifiers: getModifierLabels(formData)
+    ...Object.fromEntries(carouselKeys.map((key) => [key, carousels[key]?.getSelectedValue() || ""]))
   };
-}
-
-function getModifierLabels(formData) {
-  return ["fog", "initiative", "history"]
-    .filter((name) => formData.get(name))
-    .map((name) => ({
-      fog: "full fog-of-war",
-      initiative: "captioned initiative",
-      history: "intermission lore notes"
-    }[name]));
 }
 
 function renderDifficultyFocus(root, key) {
@@ -731,7 +667,7 @@ function renderSetupSummary(summary, form, difficultySelect, carousels, savedSet
     <strong>${setup.faction || "archival"} doctrine engaged.</strong>
     <p>Difficulty: <strong>${difficultySelect.value}</strong>. Board: <strong>${carousels.board.getSelectedLabel()}</strong>. Flag: <strong>${carousels.flag.getSelectedLabel()}</strong>.</p>
     <p>${rankDetails}.</p>
-    <p>Piece design: <strong>${carousels.pieceDesign.getSelectedLabel()}</strong>. Piece color: <strong>${carousels.pieceColor.getSelectedLabel()}</strong>. Modifiers: ${setup.modifiers.length ? setup.modifiers.join(", ") : "none"}.</p>
+    <p>Piece design: <strong>${carousels.pieceDesign.getSelectedLabel()}</strong>. Piece color: <strong>${carousels.pieceColor.getSelectedLabel()}</strong>.</p>
   `;
 }
 

@@ -9,7 +9,7 @@ Game of the Generals is part war-room simulation, part memory duel, and part nat
 ## Pages
 
 - **Command Deck** (`index.html`) - Atmospheric entry page introducing the game, difficulty ladder, and asset workflow
-- **Setup Page** (`setup.html`) - Faction flavor, board skin selection, CPU difficulty descriptors, and mission toggles
+- **Setup Page** (`setup.html`) - Faction flavor, board skin selection, CPU difficulty descriptors
 - **Battle UI** (`battle.html`) - Stylized tactical board with turn status, ranked unit cards, battlefield feed, and comic-caption overlays
 - **Rules & Lore** (`rules-lore.html`) - Concise rules dossier connecting deduction gameplay with national memory and oral tradition
 

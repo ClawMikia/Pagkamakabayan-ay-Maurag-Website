@@ -108,7 +108,6 @@ window.PagkamakabayanBattle = (function () {
       rankChar: rankChar,
       boardUrl: boardAsset ? boardAsset.url : "",
       difficulty: saved.difficulty || "Maurag po Ako",
-      fog: saved.modifiers ? saved.modifiers.indexOf("full fog-of-war") !== -1 : true,
       faction: saved.faction || "archival"
     };
   }
@@ -187,7 +186,6 @@ window.PagkamakabayanBattle = (function () {
       winner: null,
       reason: "",
       difficulty: cfg.difficulty,
-      fog: cfg.fog,
       moveCount: 0,
       log: [],
       cfg: cfg
@@ -286,8 +284,6 @@ window.PagkamakabayanBattle = (function () {
         '<div class="status-pill ' + (youTurn ? "is-active" : "") + '">' +
         (state.finished ? "Battle resolved" : youTurn ? "Your move" : "Enemy is moving…") +
         "</div>" +
-        '<div class="status-pill">Turn ' + String(state.moveCount + 1).padStart(2, "0") + "</div>" +
-        '<div class="status-pill">Fog: ' + (state.fog ? "on" : "off") + "</div>" +
         '<div class="status-pill">CPU: ' + state.difficulty + "</div>";
       if (eyebrow) eyebrow.textContent = "Turn " + String(state.moveCount + 1).padStart(2, "0") + " · " + (youTurn ? "Your command" : "Enemy tempo");
       if (title) title.textContent = state.finished
@@ -298,15 +294,11 @@ window.PagkamakabayanBattle = (function () {
     }
 
     function shownLabel(piece) {
-      if (piece.side === "player") return piece.rank.abbrev;
-      if (!state.fog) return piece.rank.abbrev;
-      return piece.revealed ? piece.rank.abbrev : "?";
+      return piece.rank.abbrev;
     }
 
     function showChar(piece) {
-      if (piece.side === "player") return true;
-      if (!state.fog) return true;
-      return piece.revealed;
+      return true;
     }
 
     function render() {
