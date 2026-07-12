@@ -1674,25 +1674,6 @@ margin: 20%;
   color: rgba(231, 223, 204, 0.7);
 }
 
-.piece__badge {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  z-index: 2;
-  width: clamp(12px, 22%, 22px);
-  height: clamp(12px, 22%, 22px);
-  border-radius: 999px;
-  overflow: hidden;
-  border: 1px solid rgba(231, 223, 204, 0.4);
-  background: rgba(9, 11, 17, 0.86);
-}
-
-.piece__badge img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .piece__label {
   position: absolute;
   z-index: 2;

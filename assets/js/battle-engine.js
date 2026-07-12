@@ -469,15 +469,11 @@ window.PagkamakabayanBattle = (function () {
             var charLayer = showChar(piece)
               ? '<div class="piece__char"><img src="' + piece.charUrl + '" alt="' + piece.rank.label + '"></div>'
               : '<div class="piece__char piece__char--hidden"></div>';
-            var badge = cfg.flagUrl
-              ? '<div class="piece__badge"><img src="' + cfg.flagUrl + '" alt="flag"></div>'
-              : "";
             inner =
               '<div class="piece piece--' + piece.side + (piece.revealed ? " piece--revealed" : "") + '">' +
               designLayer +
               colorLayer +
               charLayer +
-              badge +
               '<span class="piece__label">' + shownLabel(piece) + "</span>" +
               "</div>";
           }

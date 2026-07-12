@@ -213,15 +213,11 @@
       var charLayer = rankChar[rankKey]
         ? '<div class="piece__char"><img src="' + rankChar[rankKey] + '" alt="' + RANKS[rankKey].label + '"></div>'
         : '<div class="piece__char piece__char--hidden"></div>';
-      var badge = flagAsset
-        ? '<div class="piece__badge"><img src="' + flagAsset.url + '" alt="flag"></div>'
-        : "";
       return (
         '<div class="piece piece--player">' +
         designLayer +
         colorLayer +
         charLayer +
-        badge +
         '<span class="piece__label">' + RANKS[rankKey].abbrev + "</span>" +
         "</div>"
       );
