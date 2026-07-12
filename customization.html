@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asset Customization | Pagkamakabayan ay Maurag</title>
-  <meta name="description" content="Browse and customize country flags, piece designs, and board skins for your Game of the Generals battlefield.">
+  <meta name="description" content="Browse and customize country flags, piece designs, and board skins for this tribute to Game of the Generals, the iconic Filipino board game invented by Sofronio H. Pasola Jr. in 1970.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -69,53 +69,8 @@
         <div class="accordion-list category-accordions">
 
           <details class="category-accordion category--flags" open>
-            <summary>Country Flags <span class="accordion-count">11 packs</span></summary>
-            <div class="sub-accordions">
-              <details class="piece-accordion piece--brazil" open>
-                <summary>Brazil</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/Brazil.png" alt="Brazil"><p class="piece-gallery__label">Brazil</p></div>
-              </details>
-              <details class="piece-accordion piece--china" open>
-                <summary>China</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/China.png" alt="China"><p class="piece-gallery__label">China</p></div>
-              </details>
-              <details class="piece-accordion piece--france" open>
-                <summary>France</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/France.png" alt="France"><p class="piece-gallery__label">France</p></div>
-              </details>
-              <details class="piece-accordion piece--germany" open>
-                <summary>Germany</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/Germany.png" alt="Germany"><p class="piece-gallery__label">Germany</p></div>
-              </details>
-              <details class="piece-accordion piece--india" open>
-                <summary>India</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/India.png" alt="India"><p class="piece-gallery__label">India</p></div>
-              </details>
-              <details class="piece-accordion piece--japan" open>
-                <summary>Japan</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/Japan.png" alt="Japan"><p class="piece-gallery__label">Japan</p></div>
-              </details>
-              <details class="piece-accordion piece--korea" open>
-                <summary>Korea</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/Korea.png" alt="Korea"><p class="piece-gallery__label">Korea</p></div>
-              </details>
-              <details class="piece-accordion piece--philippines" open>
-                <summary>Philippines</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/Philippines.png" alt="Philippines"><p class="piece-gallery__label">Philippines</p></div>
-              </details>
-              <details class="piece-accordion piece--russia" open>
-                <summary>Russia</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/Russia.png" alt="Russia"><p class="piece-gallery__label">Russia</p></div>
-              </details>
-              <details class="piece-accordion piece--united-kingdom" open>
-                <summary>United Kingdom</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/United Kingdom.png" alt="United Kingdom"><p class="piece-gallery__label">United Kingdom</p></div>
-              </details>
-              <details class="piece-accordion piece--united-states" open>
-                <summary>United States</summary>
-                <div class="piece-gallery"><img src="./custom/country-flags/United States.png" alt="United States"><p class="piece-gallery__label">United States</p></div>
-              </details>
-            </div>
+            <summary>Country Flags <span class="accordion-count" data-flag-count>0 packs</span></summary>
+            <div class="sub-accordions" data-flag-accordion></div>
           </details>
 
           <details class="category-accordion category--pieces">
@@ -624,6 +579,25 @@
             slideDown();
           }
         });
+      });
+    })();
+
+    (function () {
+      var flagRoot = document.querySelector("[data-flag-accordion]");
+      var countEl = document.querySelector("[data-flag-count]");
+      if (!flagRoot) return;
+
+      window.siteAssets.then(function (manifest) {
+        var flags = (manifest && manifest.assets && manifest.assets["country-flags"]) || [];
+        if (countEl) {
+          countEl.textContent = flags.length + " pack" + (flags.length === 1 ? "" : "s");
+        }
+        flagRoot.innerHTML = flags.map(function (flag) {
+          return "<details class=\"piece-accordion\" open>" +
+            "<summary>" + (flag.label || flag.fileName) + "</summary>" +
+            "<div class=\"piece-gallery\"><img src=\"" + flag.url + "\" alt=\"" + (flag.label || flag.fileName) + "\"><p class=\"piece-gallery__label\">" + (flag.label || flag.fileName) + "</p></div>" +
+          "</details>";
+        }).join("");
       });
     })();
   </script>

@@ -1,8 +1,8 @@
 {
-    "generatedAt":  "2026-07-11T02:55:50.1739923Z",
+    "generatedAt":  "2026-07-12T06:29:04.8476340Z",
     "root":  "./custom",
     "counts":  {
-                   "country-flags":  11,
+                   "country-flags":  19,
                    "piece-colors":  0,
                    "board-skins":  10,
                    "portraits":  2,
@@ -29,9 +29,27 @@
                    "country-flags":  [
                                          {
                                              "category":  "country-flags",
+                                             "fileName":  "Afghanistan.png",
+                                             "label":  "Afghanistan",
+                                             "url":  "./custom/country-flags/Afghanistan.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Australia.png",
+                                             "label":  "Australia",
+                                             "url":  "./custom/country-flags/Australia.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
                                              "fileName":  "Brazil.png",
                                              "label":  "Brazil",
                                              "url":  "./custom/country-flags/Brazil.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Canada.png",
+                                             "label":  "Canada",
+                                             "url":  "./custom/country-flags/Canada.png"
                                          },
                                          {
                                              "category":  "country-flags",
@@ -71,6 +89,12 @@
                                          },
                                          {
                                              "category":  "country-flags",
+                                             "fileName":  "Pakistan.png",
+                                             "label":  "Pakistan",
+                                             "url":  "./custom/country-flags/Pakistan.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
                                              "fileName":  "Philippines.png",
                                              "label":  "Philippines",
                                              "url":  "./custom/country-flags/Philippines.png"
@@ -83,6 +107,24 @@
                                          },
                                          {
                                              "category":  "country-flags",
+                                             "fileName":  "Saudi Arabia.png",
+                                             "label":  "Saudi Arabia",
+                                             "url":  "./custom/country-flags/Saudi Arabia.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Switzerland.png",
+                                             "label":  "Switzerland",
+                                             "url":  "./custom/country-flags/Switzerland.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Thailand.png",
+                                             "label":  "Thailand",
+                                             "url":  "./custom/country-flags/Thailand.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
                                              "fileName":  "United Kingdom.png",
                                              "label":  "United Kingdom",
                                              "url":  "./custom/country-flags/United Kingdom.png"
@@ -92,6 +134,12 @@
                                              "fileName":  "United States.png",
                                              "label":  "United States",
                                              "url":  "./custom/country-flags/United States.png"
+                                         },
+                                         {
+                                             "category":  "country-flags",
+                                             "fileName":  "Vietnam.png",
+                                             "label":  "Vietnam",
+                                             "url":  "./custom/country-flags/Vietnam.png"
                                          }
                                      ],
                    "piece-colors":  [
