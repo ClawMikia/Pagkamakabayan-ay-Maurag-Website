@@ -45,35 +45,52 @@
           <p class="lead">Use the board skin and piece art you chose on the Setup page. When every piece is seated, launch straight into battle.</p>
         </div>
 
-        <div class="deploy-layout">
-          <article class="panel panel--inset deploy-palette-card">
-            <div class="section-heading">
-              <p class="eyebrow">Piece Tray</p>
-              <h3>Available forces</h3>
-            </div>
-            <div class="deploy-palette" data-deploy-palette></div>
-            <div class="deploy-palette__hint" data-deploy-hint></div>
-          </article>
+        <div class="deploy-modal-toggles">
+          <button class="button button--accent deploy-modal-toggle" type="button" data-open-palette-modal>Piece Tray</button>
+          <button class="button button--accent deploy-modal-toggle" type="button" data-open-sidebar-modal>Battle Orders</button>
+        </div>
 
+        <div class="deploy-layout">
           <article class="battle-board panel panel--inset deploy-board">
             <div class="battle-board__skin" data-board-skin-swatch></div>
             <div class="battle-grid" data-deploy-grid></div>
             <div class="deploy-counter" data-deploy-counter></div>
           </article>
+        </div>
 
-          <article class="panel panel--inset deploy-sidebar-card">
-            <div class="section-heading">
-              <p class="eyebrow">Battle Orders</p>
-              <h3>Readiness</h3>
-            </div>
-            <div class="status-stack" data-deploy-status></div>
-            <div class="deploy-actions">
-              <button class="button button--primary" type="button" data-start-battle>Start battle</button>
-              <button class="button button--ghost" type="button" data-clear-board>Reset board</button>
-              <a class="button button--ghost" href="./setup.html">Back to setup</a>
-              <button class="button button--ghost" type="button" data-auto-fill>Auto-fill remaining</button>
-            </div>
-          </article>
+        <div class="deploy-modal" id="modal-deploy-palette" data-deploy-palette-modal hidden>
+          <div class="deploy-modal__backdrop" data-close-palette-modal></div>
+          <div class="deploy-modal__dialog" data-deploy-palette-dialog>
+            <button class="side-modal__close deploy-modal__close" type="button" data-close-palette-modal aria-label="Close piece tray">&#x2715;</button>
+            <article class="panel panel--inset deploy-palette-card">
+              <div class="section-heading">
+                <p class="eyebrow">Piece Tray</p>
+                <h3>Available forces</h3>
+              </div>
+              <div class="deploy-palette" data-deploy-palette></div>
+              <div class="deploy-palette__hint" data-deploy-hint></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="deploy-modal" id="modal-deploy-sidebar" data-deploy-sidebar-modal hidden>
+          <div class="deploy-modal__backdrop" data-close-sidebar-modal></div>
+          <div class="deploy-modal__dialog" data-deploy-sidebar-dialog>
+            <button class="side-modal__close deploy-modal__close" type="button" data-close-sidebar-modal aria-label="Close battle orders">&#x2715;</button>
+            <article class="panel panel--inset deploy-sidebar-card">
+              <div class="section-heading">
+                <p class="eyebrow">Battle Orders</p>
+                <h3>Readiness</h3>
+              </div>
+              <div class="status-stack" data-deploy-status></div>
+              <div class="deploy-actions">
+                <button class="button button--primary" type="button" data-start-battle>Start battle</button>
+                <button class="button button--ghost" type="button" data-clear-board>Reset board</button>
+                <a class="button button--ghost" href="./setup.html">Back to setup</a>
+                <button class="button button--ghost" type="button" data-auto-fill>Auto-fill remaining</button>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
     </main>

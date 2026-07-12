@@ -242,10 +242,14 @@
       paletteRoot.querySelectorAll("[data-piece]").forEach(function (button) {
         button.addEventListener("click", function () {
           var key = button.dataset.piece;
-          selected = selected === key ? null : key;
+          var wasSelected = selected === key;
+          selected = wasSelected ? null : key;
           renderPalette();
           renderBoard();
           renderHint();
+          if (!wasSelected) {
+            closeDeployModal(paletteModal);
+          }
         });
       });
     }
@@ -318,24 +322,12 @@
       if (occupant) {
         if (selected) {
           if (selected === occupant) {
-            // Deselect / put the lifted piece back where it came from.
             board[y][x] = selected;
             selected = null;
           } else {
-            if (!isLegalPlacement(selected, y)) {
-              flashRule(selected);
-              return;
-            }
-            if (remaining(selected) <= 0) {
-              flashLimit(selected);
-              return;
-            }
-            // Swap: occupant is lifted off, selected drops in.
-            board[y][x] = selected;
-            selected = occupant;
+            flashOccupied(y, x);
           }
         } else {
-          // Lift a placed piece (it leaves the board, still selectable).
           board[y][x] = null;
           selected = occupant;
         }
@@ -367,6 +359,11 @@
       var req = requiredRow(key);
       var where = req === backRow ? "your back row" : req === frontRow ? "your front row" : "your zone";
       hintRoot.textContent = RANKS[key].label + " must be placed in " + where + " (" + ruleNote(key) + "). Choose a glowing tile there.";
+    }
+
+    function flashOccupied(x, y) {
+      if (!hintRoot) return;
+      hintRoot.textContent = "That tile is already occupied. Choose an empty glowing tile in your zone.";
     }
 
     function clearBoard() {
@@ -437,6 +434,54 @@
     if (startBtn) startBtn.addEventListener("click", startBattle);
     if (clearBtn) clearBtn.addEventListener("click", clearBoard);
     if (autoBtn) autoBtn.addEventListener("click", autoFill);
+
+    function openDeployModal(modalEl) {
+      if (!modalEl) return;
+      modalEl.hidden = false;
+      modalEl.offsetHeight;
+      requestAnimationFrame(function () {
+        modalEl.classList.add("is-open");
+      });
+    }
+
+    function closeDeployModal(modalEl) {
+      if (!modalEl) return;
+      modalEl.classList.remove("is-open");
+      setTimeout(function () {
+        if (!modalEl.classList.contains("is-open")) {
+          modalEl.hidden = true;
+        }
+      }, 320);
+    }
+
+    var paletteModal = document.querySelector("[data-deploy-palette-modal]");
+    var sidebarModal = document.querySelector("[data-deploy-sidebar-modal]");
+    var openPaletteBtn = document.querySelector("[data-open-palette-modal]");
+    var openSidebarBtn = document.querySelector("[data-open-sidebar-modal]");
+
+    if (openPaletteBtn && paletteModal) {
+      openPaletteBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        openDeployModal(paletteModal);
+      });
+    }
+    if (openSidebarBtn && sidebarModal) {
+      openSidebarBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        openDeployModal(sidebarModal);
+      });
+    }
+
+    [paletteModal, sidebarModal].forEach(function (m) {
+      if (!m) return;
+      m.querySelectorAll("[data-close-palette-modal], [data-close-sidebar-modal]").forEach(function (el) {
+        el.addEventListener("click", function () { closeDeployModal(m); });
+      });
+      var backdrop = m.querySelector(".deploy-modal__backdrop");
+      if (backdrop) {
+        backdrop.addEventListener("click", function () { closeDeployModal(m); });
+      }
+    });
 
     setSkin();
     renderPalette();
