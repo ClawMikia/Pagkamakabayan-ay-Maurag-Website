@@ -6,21 +6,21 @@
   var BOARD_SIZE = 9;
 
   var RANKS = {
-    fiveStarGeneral: { label: "5-Star General", abbrev: "5★", count: 1 },
-    fourStarGeneral: { label: "4-Star General", abbrev: "4★", count: 1 },
-    threeStarGeneral: { label: "3-Star General", abbrev: "3★", count: 1 },
-    twoStarGeneral: { label: "2-Star General", abbrev: "2★", count: 1 },
-    oneStarGeneral: { label: "1-Star General", abbrev: "1★", count: 1 },
-    colonel: { label: "Colonel", abbrev: "COL", count: 1 },
-    lieutenantColonel: { label: "Lt. Colonel", abbrev: "LTC", count: 1 },
-    major: { label: "Major", abbrev: "MAJ", count: 1 },
-    captain: { label: "Captain", abbrev: "CPT", count: 1 },
-    firstLieutenant: { label: "1st Lieutenant", abbrev: "1LT", count: 1 },
-    secondLieutenant: { label: "2nd Lieutenant", abbrev: "2LT", count: 1 },
-    sergeant: { label: "Sergeant", abbrev: "SGT", count: 1 },
-    private: { label: "Private", abbrev: "PVT", count: 6 },
-    spy: { label: "Spy", abbrev: "SPY", count: 2 },
-    flag: { label: "Flag", abbrev: "FLG", count: 1 }
+    fiveStarGeneral: { label: "5-Star General", abbrev: "5★", strength: 15, isOfficer: true, count: 1 },
+    fourStarGeneral: { label: "4-Star General", abbrev: "4★", strength: 14, isOfficer: true, count: 1 },
+    threeStarGeneral: { label: "3-Star General", abbrev: "3★", strength: 13, isOfficer: true, count: 1 },
+    twoStarGeneral: { label: "2-Star General", abbrev: "2★", strength: 12, isOfficer: true, count: 1 },
+    oneStarGeneral: { label: "1-Star General", abbrev: "1★", strength: 11, isOfficer: true, count: 1 },
+    colonel: { label: "Colonel", abbrev: "COL", strength: 10, isOfficer: true, count: 1 },
+    lieutenantColonel: { label: "Lt. Colonel", abbrev: "LTC", strength: 9, isOfficer: true, count: 1 },
+    major: { label: "Major", abbrev: "MAJ", strength: 8, isOfficer: true, count: 1 },
+    captain: { label: "Captain", abbrev: "CPT", strength: 7, isOfficer: true, count: 1 },
+    firstLieutenant: { label: "1st Lieutenant", abbrev: "1LT", strength: 6, isOfficer: true, count: 1 },
+    secondLieutenant: { label: "2nd Lieutenant", abbrev: "2LT", strength: 5, isOfficer: true, count: 1 },
+    sergeant: { label: "Sergeant", abbrev: "SGT", strength: 4, isOfficer: true, count: 1 },
+    private: { label: "Private", abbrev: "PVT", strength: 3, isOfficer: false, count: 6 },
+    spy: { label: "Spy", abbrev: "SPY", strength: 2, isOfficer: false, count: 2 },
+    flag: { label: "Flag", abbrev: "FLG", strength: 1, isOfficer: false, count: 1 }
   };
 
   function normalizeName(fileName) {
@@ -64,6 +64,16 @@
     if (!gridRoot || !paletteRoot) return;
 
     var setup = readSetup();
+
+    var tooltip = document.querySelector("[data-piece-tooltip]");
+    var tooltipImg = document.querySelector("[data-tooltip-img]");
+    var tooltipRank = document.querySelector("[data-tooltip-rank]");
+    var tooltipSide = document.querySelector("[data-tooltip-side]");
+    var tooltipStrength = document.querySelector("[data-tooltip-strength]");
+    var tooltipAbbrev = document.querySelector("[data-tooltip-abbrev]");
+    var tooltipFaction = document.querySelector("[data-tooltip-faction]");
+    var tooltipStatus = document.querySelector("[data-tooltip-status]");
+    var faction = setup.faction || "archival";
 
     var flagAsset = resolveAsset(manifest, "country-flags", setup.flag);
     var designAsset = resolveAsset(manifest, "piece-designs", setup.pieceDesign);
@@ -255,6 +265,7 @@
     }
 
     function renderBoard() {
+      if (tooltip) tooltip.hidden = true;
       var cells = "";
       for (var yy = 0; yy < BOARD_SIZE; yy++) {
         for (var xx = 0; xx < BOARD_SIZE; xx++) {
@@ -481,6 +492,44 @@
       if (backdrop) {
         backdrop.addEventListener("click", function () { closeDeployModal(m); });
       }
+    });
+
+    function showTooltipForCell(cell) {
+      if (!tooltip) return;
+      var x = Number(cell.dataset.x);
+      var y = Number(cell.dataset.y);
+      var rankKey = board[y][x];
+      if (!rankKey) {
+        tooltip.hidden = true;
+        return;
+      }
+      tooltipImg.src = rankChar[rankKey] || "";
+      var rankLabel = rankKey === "flag" && flagAsset && flagAsset.label
+        ? flagAsset.label + " Flag"
+        : RANKS[rankKey].label;
+      tooltipRank.textContent = rankLabel;
+      tooltipSide.textContent = "Friendly Unit";
+      tooltipStrength.textContent = "Combat Strength: " + (RANKS[rankKey].strength || 0);
+      tooltipAbbrev.textContent = "Rank Code: " + RANKS[rankKey].abbrev;
+      tooltipFaction.textContent = "Faction: " + faction;
+      tooltipStatus.textContent = "Status: Staged";
+      tooltip.hidden = false;
+      var rect = cell.getBoundingClientRect();
+      tooltip.style.top = (rect.bottom + 15) + "px";
+      tooltip.style.left = rect.left + "px";
+    }
+
+    gridRoot.addEventListener("mouseover", function (e) {
+      var cell = e.target.closest("[data-x]");
+      if (!cell) return;
+      showTooltipForCell(cell);
+    });
+
+    gridRoot.addEventListener("mouseout", function (e) {
+      if (!tooltip) return;
+      var cell = e.target.closest("[data-x]");
+      if (!cell) return;
+      tooltip.hidden = true;
     });
 
     setSkin();
