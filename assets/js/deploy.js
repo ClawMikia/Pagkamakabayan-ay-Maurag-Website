@@ -3,7 +3,11 @@
 
   var STORAGE_KEY = "pagkamakabayanSetup";
   var PLACEMENT_KEY = "pagkamababayanPlayerPlacement";
-  var BOARD_SIZE = 9;
+  // The real Game of the Generals board is a 9-column x 8-row rectangle
+  // (72 squares) -- not a 9x9 square. This must match the actual tile
+  // layout drawn in every custom/board-skins image.
+  var BOARD_COLS = 9;
+  var BOARD_ROWS = 8;
 
   var RANKS = {
     fiveStarGeneral: { label: "5-Star General", abbrev: "5★", strength: 15, isOfficer: true, count: 1 },
@@ -96,10 +100,10 @@
     });
     if (!rankChar.flag && flagAsset) rankChar.flag = flagAsset.url;
 
-    var homeRows = [6, 7, 8];
+    var homeRows = [5, 6, 7];
     var homeCells = [];
     homeRows.forEach(function (row) {
-      for (var col = 0; col < BOARD_SIZE; col++) {
+      for (var col = 0; col < BOARD_COLS; col++) {
         homeCells.push({ x: col, y: row });
       }
     });
@@ -112,7 +116,7 @@
     });
 
     var board = [];
-    for (var y = 0; y < BOARD_SIZE; y++) board.push(new Array(BOARD_SIZE).fill(null));
+    for (var y = 0; y < BOARD_ROWS; y++) board.push(new Array(BOARD_COLS).fill(null));
     var selected = null;
 
     // Counts are always derived from the board itself, so a piece type can
@@ -120,8 +124,8 @@
     // that can drift during lifts/swaps).
     function countOnBoard(key) {
       var count = 0;
-      for (var yy = 0; yy < BOARD_SIZE; yy++) {
-        for (var xx = 0; xx < BOARD_SIZE; xx++) {
+      for (var yy = 0; yy < BOARD_ROWS; yy++) {
+        for (var xx = 0; xx < BOARD_COLS; xx++) {
           if (board[yy][xx] === key) count++;
         }
       }
@@ -134,8 +138,8 @@
 
     function totalPlaced() {
       var count = 0;
-      for (var yy = 0; yy < BOARD_SIZE; yy++) {
-        for (var xx = 0; xx < BOARD_SIZE; xx++) {
+      for (var yy = 0; yy < BOARD_ROWS; yy++) {
+        for (var xx = 0; xx < BOARD_COLS; xx++) {
           if (board[yy][xx]) count++;
         }
       }
@@ -184,16 +188,7 @@
       if (window.BoardTiles && boardAsset) {
         window.BoardTiles.detect(boardAsset.url).then(function (layout) {
           var boardWrap = gridRoot.closest(".deploy-board") || gridRoot.closest(".battle-board");
-          if (boardWrap) {
-            var inset = (layout.inset * 100).toFixed(2) + "%";
-            boardWrap.style.setProperty("--board-inset", inset);
-            boardWrap.style.setProperty("--grid-top", inset);
-            boardWrap.style.setProperty("--grid-left", inset);
-            boardWrap.style.setProperty("--grid-right", inset);
-            boardWrap.style.setProperty("--grid-bottom", inset);
-          }
-          gridRoot.style.setProperty("--grid-cols", layout.cols || 9);
-          gridRoot.style.setProperty("--grid-rows", layout.rows || 9);
+          window.BoardTiles.apply(layout, boardWrap, gridRoot);
           renderBoard();
         });
       } else {
@@ -263,8 +258,8 @@
     function renderBoard() {
       if (tooltip) tooltip.hidden = true;
       var cells = "";
-      for (var yy = 0; yy < BOARD_SIZE; yy++) {
-        for (var xx = 0; xx < BOARD_SIZE; xx++) {
+      for (var yy = 0; yy < BOARD_ROWS; yy++) {
+        for (var xx = 0; xx < BOARD_COLS; xx++) {
           var rankKey = board[yy][xx];
           var classes = "cell";
           if (inHome(xx, yy)) {
@@ -374,8 +369,8 @@
     }
 
     function clearBoard() {
-      for (var yy = 0; yy < BOARD_SIZE; yy++) {
-        for (var xx = 0; xx < BOARD_SIZE; xx++) board[yy][xx] = null;
+      for (var yy = 0; yy < BOARD_ROWS; yy++) {
+        for (var xx = 0; xx < BOARD_COLS; xx++) board[yy][xx] = null;
       }
       selected = null;
       renderPalette();
@@ -422,8 +417,8 @@
       }
       var flagOk = false;
       var spyCount = 0;
-      for (var y = 0; y < BOARD_SIZE; y++) {
-        for (var x = 0; x < BOARD_SIZE; x++) {
+      for (var y = 0; y < BOARD_ROWS; y++) {
+        for (var x = 0; x < BOARD_COLS; x++) {
           var key = board[y][x];
           if (key === "flag" && y === backRow) flagOk = true;
           if (key === "spy" && y === frontRow) spyCount++;

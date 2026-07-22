@@ -1,7 +1,11 @@
 window.PagkamakabayanBattle = (function () {
   "use strict";
 
-  var BOARD_SIZE = 9;
+  // The real Game of the Generals board is a 9-column x 8-row rectangle
+  // (72 squares) -- not a 9x9 square. This must match the actual tile
+  // layout drawn in every custom/board-skins image.
+  var BOARD_COLS = 9;
+  var BOARD_ROWS = 8;
   var STORAGE_KEY = "pagkamakabayanSetup";
 
   // Rank definitions: strength is higher = stronger. Officers are Sergeant (4) and above.
@@ -130,8 +134,8 @@ window.PagkamakabayanBattle = (function () {
 
   function createGame(cfg, playerPlacement) {
     var board = [];
-    for (var y = 0; y < BOARD_SIZE; y++) {
-      board.push(new Array(BOARD_SIZE).fill(null));
+    for (var y = 0; y < BOARD_ROWS; y++) {
+      board.push(new Array(BOARD_COLS).fill(null));
     }
 
     var idc = 0;
@@ -150,11 +154,11 @@ window.PagkamakabayanBattle = (function () {
     function placeFromLayout(side, layout) {
       var flagPlaced = false;
       var count = 0;
-      for (var ly = 0; ly < BOARD_SIZE; ly++) {
-        for (var lx = 0; lx < BOARD_SIZE; lx++) {
+      for (var ly = 0; ly < BOARD_ROWS; ly++) {
+        for (var lx = 0; lx < BOARD_COLS; lx++) {
           var key = layout && layout[ly] && layout[ly][lx];
       if (!key || !RANKS[key]) continue;
-      if (side === "player" && ly < 6) continue;
+      if (side === "player" && ly < 5) continue;
       if (side === "cpu" && ly > 2) continue;
           board[ly][lx] = makePiece(side, key);
           count++;
@@ -165,14 +169,14 @@ window.PagkamakabayanBattle = (function () {
     }
 
     function place(side) {
-      var homeRows = side === "player" ? [6, 7, 8] : [0, 1, 2];
-      var backRow = side === "player" ? 8 : 0;
-      var frontRow = side === "player" ? 6 : 2;
+      var homeRows = side === "player" ? [5, 6, 7] : [0, 1, 2];
+      var backRow = side === "player" ? 7 : 0;
+      var frontRow = side === "player" ? 5 : 2;
 
       var cellsByRow = {};
       homeRows.forEach(function (row) {
         cellsByRow[row] = [];
-        for (var col = 0; col < BOARD_SIZE; col++) {
+        for (var col = 0; col < BOARD_COLS; col++) {
           cellsByRow[row].push({ x: col, y: row });
         }
       });
@@ -230,7 +234,7 @@ window.PagkamakabayanBattle = (function () {
   }
 
   function inBounds(x, y) {
-    return x >= 0 && y >= 0 && x < BOARD_SIZE && y < BOARD_SIZE;
+    return x >= 0 && y >= 0 && x < BOARD_COLS && y < BOARD_ROWS;
   }
 
   function legalMoves(state, x, y) {
@@ -253,8 +257,8 @@ window.PagkamakabayanBattle = (function () {
 
   function allLegalMoves(state, side) {
     var moves = [];
-    for (var y = 0; y < BOARD_SIZE; y++) {
-      for (var x = 0; x < BOARD_SIZE; x++) {
+    for (var y = 0; y < BOARD_ROWS; y++) {
+      for (var x = 0; x < BOARD_COLS; x++) {
         var piece = state.board[y][x];
         if (!piece || !piece.alive || piece.side !== side) continue;
         legalMoves(state, x, y).forEach(function (move) {
@@ -266,8 +270,8 @@ window.PagkamakabayanBattle = (function () {
   }
 
   function findFlag(state, side) {
-    for (var y = 0; y < BOARD_SIZE; y++) {
-      for (var x = 0; x < BOARD_SIZE; x++) {
+    for (var y = 0; y < BOARD_ROWS; y++) {
+      for (var x = 0; x < BOARD_COLS; x++) {
         var piece = state.board[y][x];
         if (piece && piece.alive && piece.side === side && piece.rankKey === "flag") {
           return { x: x, y: y };
@@ -356,9 +360,9 @@ window.PagkamakabayanBattle = (function () {
         var raw = localStorage.getItem("pagkamakabayanPlayerPlacement");
         if (!raw) return null;
         var arr = JSON.parse(raw);
-        if (!Array.isArray(arr) || arr.length !== BOARD_SIZE) return null;
+        if (!Array.isArray(arr) || arr.length !== BOARD_ROWS) return null;
         for (var i = 0; i < arr.length; i++) {
-          if (!Array.isArray(arr[i]) || arr[i].length !== BOARD_SIZE) return null;
+          if (!Array.isArray(arr[i]) || arr[i].length !== BOARD_COLS) return null;
         }
         return arr;
       } catch (error) {
@@ -448,8 +452,8 @@ window.PagkamakabayanBattle = (function () {
       }
 
       var cells = "";
-      for (var y = 0; y < BOARD_SIZE; y++) {
-        for (var x = 0; x < BOARD_SIZE; x++) {
+      for (var y = 0; y < BOARD_ROWS; y++) {
+        for (var x = 0; x < BOARD_COLS; x++) {
           var key = x + "," + y;
           var piece = state.board[y][x];
           var classes = "cell";
@@ -556,7 +560,7 @@ window.PagkamakabayanBattle = (function () {
       }
 
       if (att.rankKey === "flag" && att.alive) {
-        var enemyBack = att.side === "player" ? 0 : 8;
+        var enemyBack = att.side === "player" ? 0 : BOARD_ROWS - 1;
         if (to.y === enemyBack) {
           endGame(att.side, "reach");
           return;
@@ -749,16 +753,7 @@ window.PagkamakabayanBattle = (function () {
         }
         window.BoardTiles.detect(cfg.boardUrl).then(function (layout) {
           var boardWrap = gridRoot.closest(".battle-board");
-          if (boardWrap) {
-            var inset = (layout.inset * 100).toFixed(2) + "%";
-            boardWrap.style.setProperty("--board-inset", inset);
-            boardWrap.style.setProperty("--grid-top", inset);
-            boardWrap.style.setProperty("--grid-left", inset);
-            boardWrap.style.setProperty("--grid-right", inset);
-            boardWrap.style.setProperty("--grid-bottom", inset);
-          }
-          gridRoot.style.setProperty("--grid-cols", layout.cols);
-          gridRoot.style.setProperty("--grid-rows", layout.rows);
+          window.BoardTiles.apply(layout, boardWrap, gridRoot);
           render();
         }).catch(function () {
           render();
