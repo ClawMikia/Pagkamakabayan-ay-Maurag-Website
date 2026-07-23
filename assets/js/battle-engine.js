@@ -808,9 +808,17 @@ window.PagkamakabayanBattle = (function () {
           tooltipFaction.textContent = "Faction: " + (state.cfg.faction || "archival");
           tooltipStatus.textContent = piece.revealed ? "Status: Revealed" : "Status: Hidden";
           tooltip.hidden = false;
+          tooltip.offsetHeight;
           var rect = cell.getBoundingClientRect();
           tooltip.style.top = (rect.bottom + 15) + "px";
           tooltip.style.left = rect.left + "px";
+          var tipRect = tooltip.getBoundingClientRect();
+          if (tipRect.bottom > window.innerHeight) {
+            tooltip.style.top = (rect.top - tipRect.height - 15) + "px";
+          }
+          if (tipRect.right > window.innerWidth) {
+            tooltip.style.left = Math.max(10, window.innerWidth - tipRect.width - 10) + "px";
+          }
         }
       });
 
