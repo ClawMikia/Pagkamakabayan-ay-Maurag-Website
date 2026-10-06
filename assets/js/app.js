@@ -206,6 +206,9 @@ function initSetupPage(manifest) {
         assets: manifest.assets?.[definition.category] || [],
         savedValue: savedSetup[definition.key],
         emptyLabel: definition.emptyLabel,
+        searchInput: definition.key === "flag" ? document.querySelector("[data-flag-search-input]") : null,
+        searchCount: definition.key === "flag" ? document.querySelector("[data-flag-search-count]") : null,
+        showDots: definition.key !== "flag",
         onChange: () => {
           syncSetup();
           renderSetupSummary(summary, form, difficultySelect, carousels);
@@ -257,8 +260,10 @@ function initSetupPage(manifest) {
   });
 }
 
-function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel, onChange }) {
-  let currentAssets = [...(assets || [])];
+function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel, onChange, searchInput, searchCount, showDots }) {
+  const shouldShowDots = showDots !== false;
+  const allAssets = [...(assets || [])];
+  let currentAssets = [...allAssets];
   let currentIndex = Math.max(0, currentAssets.findIndex((asset) => asset.fileName === savedValue));
   if (currentIndex === -1) currentIndex = 0;
 
@@ -298,12 +303,16 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   const count = root.querySelector("[data-carousel-count]");
   const dots = root.querySelector("[data-carousel-dots]");
 
+  if (dots && !shouldShowDots) {
+    dots.style.display = "none";
+  }
+
   const render = () => {
     if (!currentAssets.length) {
       hiddenInput.value = "";
       title.textContent = "";
-      count.textContent = "0 of 0";
-      mainCard.innerHTML = `<div class="empty-state">${emptyLabel} Drop images here or run refresh-assets.ps1.</div>`;
+      count.textContent = `0 of ${allAssets.length}`;
+      mainCard.innerHTML = `<div class="empty-state">${allAssets.length ? "No matches for your search. Clear the search to see every option." : `${emptyLabel} Drop images here or run refresh-assets.ps1.`}</div>`;
       prevCard.innerHTML = "";
       nextCard.innerHTML = "";
       dots.innerHTML = "";
@@ -320,17 +329,19 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
     mainCard.innerHTML = renderCarouselCard(currentAsset, "Current");
     prevCard.innerHTML = renderCarouselCard(previousAsset, "Previous");
     nextCard.innerHTML = renderCarouselCard(nextAsset, "Next");
-    dots.innerHTML = currentAssets
-      .map((asset, index) => `<button class="visual-carousel__dot${index === currentIndex ? " is-active" : ""}" type="button" data-carousel-dot="${index}" aria-label="Select ${asset.label || asset.fileName}"></button>`)
-      .join("");
+    if (shouldShowDots) {
+      dots.innerHTML = currentAssets
+        .map((asset, index) => `<button class="visual-carousel__dot${index === currentIndex ? " is-active" : ""}" type="button" data-carousel-dot="${index}" aria-label="${asset.label || asset.fileName}"></button>`)
+        .join("");
 
-    dots.querySelectorAll("[data-carousel-dot]").forEach((button) => {
-      button.addEventListener("click", () => {
-        currentIndex = Number(button.dataset.carouselDot);
-        render();
-        onChange?.();
+      dots.querySelectorAll("[data-carousel-dot]").forEach((button) => {
+        button.addEventListener("click", () => {
+          currentIndex = Number(button.dataset.carouselDot);
+          render();
+          onChange?.();
+        });
       });
-    });
+    }
   };
 
   let isAnimating = false;
@@ -367,6 +378,41 @@ function createSetupCarousel({ root, hiddenInput, assets, savedValue, emptyLabel
   prevButton?.addEventListener("click", () => animateCarousel("prev"));
 
   nextButton?.addEventListener("click", () => animateCarousel("next"));
+
+  const applyFilter = (query) => {
+    const term = String(query || "").trim().toLowerCase();
+    const beforeFileName = currentAssets[currentIndex]?.fileName || "";
+
+    currentAssets = term
+      ? allAssets.filter((asset) => {
+          const label = String(asset.label || "").toLowerCase();
+          const fileName = String(asset.fileName || "").toLowerCase();
+          return label.includes(term) || fileName.includes(term);
+        })
+      : [...allAssets];
+
+    currentIndex = currentAssets.findIndex((asset) => asset.fileName === beforeFileName);
+    if (currentIndex === -1) currentIndex = 0;
+
+    if (searchCount) {
+      searchCount.textContent = term === "" ? "" : `${currentAssets.length} of ${allAssets.length}`;
+    }
+
+    render();
+
+    const afterFileName = currentAssets[currentIndex]?.fileName || "";
+    if (afterFileName !== beforeFileName) {
+      onChange?.();
+    }
+  };
+
+  searchInput?.addEventListener("input", () => applyFilter(searchInput.value));
+
+  searchInput?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  });
 
   render();
 

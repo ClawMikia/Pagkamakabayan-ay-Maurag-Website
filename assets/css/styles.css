@@ -687,6 +687,48 @@ code {
   border-radius: 14px;
 }
 
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 14px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(107, 114, 127, 0.28);
+  border-radius: 14px;
+}
+
+.search-field:focus-within {
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+.search-field__icon {
+  flex: 0 0 auto;
+}
+
+.search-field input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.search-field input::placeholder {
+  color: var(--muted);
+}
+
+.search-field__count {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 .toggle-fieldset {
   margin: 0;
   padding: 16px;
@@ -2226,6 +2268,10 @@ margin: 20%;
   transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.sub-accordions .search-field {
+  grid-column: 1 / -1;
+}
+
 .piece-accordion {
   border-radius: 20px;
   border: 1px solid rgba(107, 114, 127, 0.18);
@@ -2234,6 +2280,10 @@ margin: 20%;
   transition: background 0.2s ease;
   display: flex;
   flex-direction: column;
+}
+
+.piece-accordion.is-hidden {
+  display: none;
 }
 
 .piece-accordion summary {

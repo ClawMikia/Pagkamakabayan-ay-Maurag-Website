@@ -90,7 +90,13 @@
 
           <details class="category-accordion category--flags" open>
             <summary>Country Flags <span class="accordion-count" data-flag-count>0 packs</span></summary>
-            <div class="sub-accordions" data-flag-accordion></div>
+            <div class="sub-accordions" data-flag-accordion>
+              <label class="search-field" data-flag-search>
+                <svg class="search-field__icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+                <input type="search" placeholder="Search country flags..." autocomplete="off" data-flag-search-input aria-label="Search country flags">
+                <span class="search-field__count" data-flag-search-count></span>
+              </label>
+            </div>
           </details>
 
           <details class="category-accordion category--pieces">
@@ -605,6 +611,8 @@
     (function () {
       var flagRoot = document.querySelector("[data-flag-accordion]");
       var countEl = document.querySelector("[data-flag-count]");
+      var searchInput = document.querySelector("[data-flag-search-input]");
+      var searchCount = document.querySelector("[data-flag-search-count]");
       if (!flagRoot) return;
 
       window.siteAssets.then(function (manifest) {
@@ -612,12 +620,35 @@
         if (countEl) {
           countEl.textContent = flags.length + " pack" + (flags.length === 1 ? "" : "s");
         }
-        flagRoot.innerHTML = flags.map(function (flag) {
+        flagRoot.insertAdjacentHTML("beforeend", flags.map(function (flag) {
           return "<details class=\"piece-accordion\" open>" +
             "<summary>" + (flag.label || flag.fileName) + "</summary>" +
             "<div class=\"piece-gallery\"><img src=\"" + flag.url + "\" alt=\"" + (flag.label || flag.fileName) + "\"><p class=\"piece-gallery__label\">" + (flag.label || flag.fileName) + "</p></div>" +
           "</details>";
-        }).join("");
+        }).join(""));
+
+        var flagItems = Array.prototype.slice.call(flagRoot.querySelectorAll(".piece-accordion"));
+
+        function applyFlagFilter(query) {
+          var term = String(query || "").trim().toLowerCase();
+          var visible = 0;
+          flagItems.forEach(function (item) {
+            var summary = item.querySelector("summary");
+            var labelText = summary ? summary.textContent : "";
+            var matches = term === "" || String(labelText).toLowerCase().indexOf(term) !== -1;
+            item.classList.toggle("is-hidden", !matches);
+            if (matches) visible += 1;
+          });
+          if (searchCount) {
+            searchCount.textContent = term === "" ? "" : visible + " of " + flags.length;
+          }
+        }
+
+        if (searchInput) {
+          searchInput.addEventListener("input", function () {
+            applyFlagFilter(searchInput.value);
+          });
+        }
       });
     })();
   </script>
