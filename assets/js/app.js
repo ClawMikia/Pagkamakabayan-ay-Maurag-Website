@@ -924,6 +924,9 @@ function renderFeed(root, shuffle = false) {
     }
   }
 
+  // Browsers may block autoplay; have a user-gesture retry ready before it is attempted.
+  armGesture();
+
   function stopMusic() {
     savePosition();
     music.pause();
@@ -1044,6 +1047,13 @@ function renderFeed(root, shuffle = false) {
   }
 
   function bindControls() {
+    document.querySelectorAll("[data-audio-enable]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!settings.musicOn) setMusicOn(true);
+        else startMusic();
+        if (!settings.sfxOn) setSfxOn(true);
+      });
+    });
     document.querySelectorAll("[data-audio-toggle]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (btn.dataset.audioToggle === "music") setMusicOn(!settings.musicOn);
