@@ -60,6 +60,26 @@
         </div>
       </section>
 
+      <section class="panel" data-audio-panel>
+        <div class="section-heading">
+          <p class="eyebrow">Audio Console</p>
+          <h3>Music and sound effects</h3>
+          <p class="lead">Mute either channel or set its volume. Settings are saved and apply on every page.</p>
+        </div>
+        <div class="audio-controls">
+          <div class="audio-row">
+            <button class="button button--accent audio-row__toggle" type="button" data-audio-toggle="music" aria-pressed="true">Music: On</button>
+            <input class="audio-row__slider" type="range" min="0" max="100" step="5" value="50" data-audio-volume="music" aria-label="Music volume">
+            <output class="audio-row__value" data-audio-output="music">50%</output>
+          </div>
+          <div class="audio-row">
+            <button class="button button--accent audio-row__toggle" type="button" data-audio-toggle="sfx" aria-pressed="true">Effects: On</button>
+            <input class="audio-row__slider" type="range" min="0" max="100" step="5" value="80" data-audio-volume="sfx" aria-label="Sound effects volume">
+            <output class="audio-row__value" data-audio-output="sfx">80%</output>
+          </div>
+        </div>
+      </section>
+
       <section class="panel">
         <div class="section-heading">
           <p class="eyebrow">Asset Registry</p>

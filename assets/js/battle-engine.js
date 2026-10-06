@@ -519,12 +519,14 @@ window.PagkamakabayanBattle = (function () {
       }
 
       if (!def) {
+        if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.place();
         state.board[to.y][to.x] = att;
         state.board[from.y][from.x] = null;
         log("A " + sideWord(att.side) + " " + att.rank.label + " advanced.", att.side === "player" ? "player" : "cpu");
       } else {
         att.revealed = true;
         def.revealed = true;
+        if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.capture();
         var result = fight(att, def);
         var attName = resolveName(att);
         var defName = resolveName(def);
@@ -602,6 +604,7 @@ window.PagkamakabayanBattle = (function () {
         }
       }
 
+      if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.navigate();
       if (piece && piece.alive && piece.side === "player") {
         state.selected = state.selected && state.selected.x === x && state.selected.y === y ? null : { x: x, y: y };
         render();

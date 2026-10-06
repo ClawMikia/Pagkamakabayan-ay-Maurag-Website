@@ -246,14 +246,14 @@ function initSetupPage(manifest) {
     const setup = collectSetupState(form, difficultySelect, carousels);
     saveSetup(setup);
     localStorage.removeItem("pagkamakabayanPlayerPlacement");
-    window.location.href = "deploy.html";
+    window.PagkamakabayanAudio.goTo("deploy.html");
   });
 
   randomDeployButton?.addEventListener("click", () => {
     const setup = collectSetupState(form, difficultySelect, carousels);
     saveSetup(setup);
     localStorage.removeItem("pagkamakabayanPlayerPlacement");
-    window.location.href = "battle.html";
+    window.PagkamakabayanAudio.goTo("battle.html");
   });
 }
 
@@ -847,3 +847,231 @@ function renderFeed(root, shuffle = false) {
     `)
     .join("");
 }
+
+/* ==========================================================================
+   Audio: looping background music + navigate / place / capture effects.
+   Files: ./assets/audio/{background,navigate,place,capture}.mp3
+   The site is multi-page, so the music position is saved and resumed on the
+   next page to keep it continuous between screens.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var BASE = "./assets/audio/";
+  var SETTINGS_KEY = "pagkamakabayanAudio";
+  var POS_KEY = "pagkamakabayanMusicPos";
+  var NAV_DELAY_MS = 170; // lets the click sound be heard before a page change
+  var POOL_SIZE = 4;
+
+  function readJson(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; }
+  }
+  function writeJson(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* ignore */ }
+  }
+
+  var saved = readJson(SETTINGS_KEY) || {};
+  var settings = {
+    musicOn: saved.musicOn !== false,
+    sfxOn: saved.sfxOn !== false,
+    musicVol: typeof saved.musicVol === "number" ? saved.musicVol : 0.5,
+    sfxVol: typeof saved.sfxVol === "number" ? saved.sfxVol : 0.8
+  };
+  function persist() { writeJson(SETTINGS_KEY, settings); }
+
+  // ---- music --------------------------------------------------------------
+  var music = new Audio(BASE + "background.mp3");
+  music.loop = true;
+  music.preload = "auto";
+  music.volume = settings.musicVol;
+
+  var lastSave = 0;
+  function savePosition() {
+    if (!isFinite(music.currentTime) || music.currentTime <= 0) return;
+    writeJson(POS_KEY, { t: music.currentTime, at: Date.now() });
+  }
+
+  var seeked = false;
+  function seekToSaved() {
+    if (seeked || !isFinite(music.duration) || music.duration <= 0) return;
+    seeked = true;
+    var pos = readJson(POS_KEY);
+    // only resume when we arrived from another page of the site a moment ago
+    if (pos && typeof pos.t === "number" && Date.now() - pos.at < 15000) {
+      var elapsed = Math.max(0, (Date.now() - pos.at) / 1000);
+      try { music.currentTime = (pos.t + elapsed) % music.duration; } catch (e) { /* ignore */ }
+    }
+  }
+
+  var gestureArmed = false;
+  function armGesture() {
+    if (gestureArmed) return;
+    gestureArmed = true;
+    var events = ["pointerdown", "keydown", "touchstart"];
+    var handler = function () {
+      events.forEach(function (n) { document.removeEventListener(n, handler, true); });
+      gestureArmed = false;
+      startMusic();
+    };
+    events.forEach(function (n) { document.addEventListener(n, handler, true); });
+  }
+
+  function startMusic() {
+    if (!settings.musicOn || document.hidden) return;
+    var p = music.play();
+    if (p && typeof p.catch === "function") {
+      p.catch(function () { armGesture(); }); // autoplay blocked: wait for first click/key
+    }
+  }
+
+  function stopMusic() {
+    savePosition();
+    music.pause();
+  }
+
+  music.addEventListener("loadedmetadata", function () {
+    seekToSaved();
+    startMusic();
+  });
+  music.addEventListener("timeupdate", function () {
+    var now = Date.now();
+    if (now - lastSave > 500) { lastSave = now; savePosition(); }
+  });
+  if (music.readyState >= 1) { seekToSaved(); startMusic(); }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) stopMusic(); else startMusic();
+  });
+  window.addEventListener("pagehide", savePosition);
+  window.addEventListener("beforeunload", savePosition);
+
+  // ---- sound effects -----------------------------------------------------
+  var pools = {};
+  var cursor = {};
+  ["navigate", "place", "capture"].forEach(function (name) {
+    pools[name] = [];
+    cursor[name] = 0;
+    for (var i = 0; i < POOL_SIZE; i++) {
+      var a = new Audio(BASE + name + ".mp3");
+      a.preload = "auto";
+      pools[name].push(a);
+    }
+  });
+
+  function playSfx(name) {
+    if (!settings.sfxOn || settings.sfxVol <= 0) return;
+    var pool = pools[name];
+    var a = pool[cursor[name]];
+    cursor[name] = (cursor[name] + 1) % pool.length;
+    try {
+      a.volume = settings.sfxVol;
+      a.currentTime = 0;
+      var p = a.play();
+      if (p && typeof p.catch === "function") p.catch(function () { /* blocked until a gesture */ });
+    } catch (e) { /* ignore */ }
+  }
+
+  var lastNavigate = 0;
+  function navigate() {
+    var now = Date.now();
+    if (now - lastNavigate < 90) return; // merge a button + its handler into one sound
+    lastNavigate = now;
+    playSfx("navigate");
+  }
+
+  function goTo(url) {
+    var delay = settings.sfxOn ? NAV_DELAY_MS : 0;
+    setTimeout(function () { window.location.href = url; }, delay);
+  }
+
+  // Every click on a link / button / summary / swatch plays "navigate" (never hover).
+  // Board tiles are excluded: deploy.js / battle-engine.js decide their sound.
+  var CLICKABLE = 'a[href], button, summary, [role="button"], [data-swatch-index], label[for], input[type="checkbox"], input[type="radio"]';
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var el = t.closest(CLICKABLE);
+    if (!el || el.disabled) return;
+    if (el.closest(".cell") || el.hasAttribute("data-audio-silent")) return;
+    navigate();
+
+    if (el.tagName === "A" && settings.sfxOn) {
+      var href = el.getAttribute("href");
+      if (!href || href.charAt(0) === "#" || el.target === "_blank" || el.hasAttribute("download")) return;
+      if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      var url;
+      try { url = new URL(el.href, window.location.href); } catch (err) { return; }
+      if (url.protocol !== window.location.protocol || url.host !== window.location.host) return;
+      e.preventDefault();
+      goTo(url.href);
+    }
+  }, true);
+
+  // ---- settings controls (Asset Customization page) -------------------------
+  function refreshControls() {
+    document.querySelectorAll("[data-audio-toggle]").forEach(function (btn) {
+      var kind = btn.dataset.audioToggle;
+      var on = kind === "music" ? settings.musicOn : settings.sfxOn;
+      btn.textContent = (kind === "music" ? "Music" : "Effects") + ": " + (on ? "On" : "Muted");
+      btn.setAttribute("aria-pressed", String(on));
+    });
+    document.querySelectorAll("[data-audio-volume]").forEach(function (input) {
+      var kind = input.dataset.audioVolume;
+      var vol = kind === "music" ? settings.musicVol : settings.sfxVol;
+      input.value = String(Math.round(vol * 100));
+      var out = document.querySelector('[data-audio-output="' + kind + '"]');
+      if (out) out.textContent = Math.round(vol * 100) + "%";
+    });
+  }
+
+  function setMusicOn(on) {
+    settings.musicOn = !!on;
+    persist();
+    if (settings.musicOn) startMusic(); else stopMusic();
+    refreshControls();
+  }
+  function setSfxOn(on) { settings.sfxOn = !!on; persist(); refreshControls(); }
+  function setMusicVolume(v) {
+    settings.musicVol = Math.min(1, Math.max(0, v));
+    music.volume = settings.musicVol;
+    persist();
+    refreshControls();
+  }
+  function setSfxVolume(v) {
+    settings.sfxVol = Math.min(1, Math.max(0, v));
+    persist();
+    refreshControls();
+  }
+
+  function bindControls() {
+    document.querySelectorAll("[data-audio-toggle]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (btn.dataset.audioToggle === "music") setMusicOn(!settings.musicOn);
+        else setSfxOn(!settings.sfxOn);
+      });
+    });
+    document.querySelectorAll("[data-audio-volume]").forEach(function (input) {
+      var kind = input.dataset.audioVolume;
+      input.addEventListener("input", function () {
+        var v = Number(input.value) / 100;
+        if (kind === "music") setMusicVolume(v); else setSfxVolume(v);
+      });
+      if (kind === "sfx") {
+        input.addEventListener("change", function () { playSfx("place"); }); // preview
+      }
+    });
+    refreshControls();
+  }
+  bindControls();
+
+  window.PagkamakabayanAudio = {
+    navigate: navigate,
+    place: function () { playSfx("place"); },
+    capture: function () { playSfx("capture"); },
+    goTo: goTo,
+    setMusicOn: setMusicOn,
+    setSfxOn: setSfxOn,
+    setMusicVolume: setMusicVolume,
+    setSfxVolume: setSfxVolume
+  };
+})();

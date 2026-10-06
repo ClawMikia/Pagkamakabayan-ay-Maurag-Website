@@ -324,12 +324,14 @@
       if (occupant) {
         if (selected) {
           if (selected === occupant) {
+            if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.place();
             board[y][x] = selected;
             selected = null;
           } else {
             flashOccupied(y, x);
           }
         } else {
+          if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.navigate();
           board[y][x] = null;
           selected = occupant;
         }
@@ -342,6 +344,7 @@
           flashLimit(selected);
           return;
         }
+        if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.place();
         board[y][x] = selected;
         selected = null;
       }
@@ -430,7 +433,8 @@
       }
       var payload = board.map(function (row) { return row.slice(); });
       localStorage.setItem(PLACEMENT_KEY, JSON.stringify(payload));
-      window.location.href = "battle.html";
+      if (window.PagkamakabayanAudio) window.PagkamakabayanAudio.goTo("battle.html");
+      else window.location.href = "battle.html";
     }
 
     if (startBtn) startBtn.addEventListener("click", startBattle);
